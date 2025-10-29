@@ -404,10 +404,24 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
-app.use(express.static(path.join(__dirname)));
 
-// Serve images with proper headers
-app.use('/images', express.static(path.join(__dirname, 'images')));
+// Serve static files (for local development; Vercel serves these via CDN)
+// Only use express.static locally, not on Vercel
+if (!process.env.VERCEL && !process.env.VERCEL_ENV) {
+    app.use(express.static(path.join(__dirname)));
+    app.use('/images', express.static(path.join(__dirname, 'images')));
+} else {
+    // On Vercel, serve static files through Express as fallback
+    // But prefer Vercel CDN (configured in vercel.json)
+    app.use(express.static(path.join(__dirname), { 
+        setHeaders: (res, path) => {
+            if (path.endsWith('.css')) {
+                res.setHeader('Content-Type', 'text/css');
+            }
+        }
+    }));
+    app.use('/images', express.static(path.join(__dirname, 'images')));
+}
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -1169,15 +1183,41 @@ app.use((req, res) => {
     res.status(404).json({ error: 'Page not found' });
 });
 
-// Start server - wait for data to load first
-(async () => {
-    await loadDataFromStorage();
-    app.listen(PORT, () => {
-        console.log(`Cropwise server running on http://localhost:${PORT}`);
-        console.log(`Signup: http://localhost:${PORT}/signup`);
-        console.log(`Login: http://localhost:${PORT}/login`);
-        console.log(`Dashboard: http://localhost:${PORT}/dashboard`);
-    });
-})();
+// Initialize data on server start (for local development)
+// On Vercel, we'll initialize per-request or lazily
+let dataInitialized = false;
+const initializeData = async () => {
+    if (!dataInitialized) {
+        await loadDataFromStorage();
+        dataInitialized = true;
+    }
+};
 
-module.exports = app;
+// For Vercel serverless: export handler and initialize data
+// For local development: start server normally
+if (process.env.VERCEL || process.env.VERCEL_ENV) {
+    // Vercel serverless mode - don't start server, just export app
+    // Initialize data on first request
+    const originalUse = app.use.bind(app);
+    app.use = function(...args) {
+        return originalUse(...args);
+    };
+    
+    // Initialize data before handling first request
+    initializeData().catch(err => console.error('Data initialization error:', err));
+    
+    module.exports = app;
+} else {
+    // Local development - start server normally
+    (async () => {
+        await loadDataFromStorage();
+        app.listen(PORT, () => {
+            console.log(`Cropwise server running on http://localhost:${PORT}`);
+            console.log(`Signup: http://localhost:${PORT}/signup`);
+            console.log(`Login: http://localhost:${PORT}/login`);
+            console.log(`Dashboard: http://localhost:${PORT}/dashboard`);
+        });
+    })();
+    
+    module.exports = app;
+}
