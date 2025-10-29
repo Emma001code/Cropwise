@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cropwise - Agriculturists</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        .header {
+            background: #2E7D32;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .logo .leaf {
+            font-size: 1.5rem;
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .profile-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .profile-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Page Title */
+        .page-title {
+            text-align: center;
+            padding: 2rem 0 1rem 0;
+            color: #2d3436;
+        }
+
+        .page-title h2 {
+            font-size: 2.5rem;
+            margin: 0 0 0.5rem 0;
+            font-weight: 600;
+        }
+
+        .page-title p {
+            font-size: 1.1rem;
+            margin: 0;
+            color: #636e72;
+        }
+
+        /* Main Container */
+        .agriculturists-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Controls Section */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            padding: 0.8rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+            width: 250px;
+        }
+
+        .search-input:focus {
+            border-color: #2E7D32;
+        }
+
+        .filter-select {
+            padding: 0.8rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+            background: white;
+        }
+
+        .enroll-btn {
+            background: #2E7D32;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .enroll-btn:hover {
+            background: #1B5E20;
+            transform: translateY(-2px);
+        }
+
+        /* Agriculturists Grid */
+        .agriculturists-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .agriculturist-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .agriculturist-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .profile-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 1rem;
+            border: 4px solid #2E7D32;
+        }
+
+        .agriculturist-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3436;
+            margin: 0 0 1rem 0;
+        }
+
+        .agriculturist-details {
+            text-align: left;
+            margin: 1rem 0;
+        }
+
+        .detail-item {
+            margin: 0.5rem 0;
+            color: #636e72;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        .specialization-tag {
+            display: inline-block;
+            background: #2E7D32;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 0.5rem 0;
+        }
+
+        .admin-actions {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .delete-btn::before {
+            content: "🗑️";
+            font-size: 16px;
+            filter: brightness(0) invert(1);
+        }
+
+        .edit-btn {
+            background: #2E7D32;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 60px;
+            height: 35px;
+        }
+
+        .edit-btn:hover {
+            background: #1B5E20;
+            transform: scale(1.05);
+        }
+
+        /* Enrollment Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 2% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3436;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #636e72;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            border-color: #2E7D32;
+        }
+
+        .form-input[type="file"] {
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+
+        .form-input[type="file"]::-webkit-file-upload-button {
+            background: #2E7D32;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+
+        .form-input[type="file"]::-webkit-file-upload-button:hover {
+            background: #1B5E20;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+            position: sticky;
+            bottom: 0;
+            background: white;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #2E7D32;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1B5E20;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #636e72;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e0e0e0;
+            border-top: 4px solid #2E7D32;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #636e72;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #2d3436;
+        }
+
+        /* Custom Popup Styles */
+        .custom-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #4CAF50;
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+            min-width: 300px;
+            animation: popupSlideIn 0.3s ease-out;
+        }
+
+        .custom-popup button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 0.5rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .custom-popup button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes popupSlideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Custom Confirmation Popup Styles */
+        .custom-confirmation-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #4CAF50;
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-align: center;
+            min-width: 350px;
+            max-width: 500px;
+            animation: popupSlideIn 0.3s ease-out;
+        }
+
+        .custom-confirmation-popup .popup-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .custom-confirmation-popup .popup-message {
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .custom-confirmation-popup .popup-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .custom-confirmation-popup .popup-btn {
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .custom-confirmation-popup .popup-btn-cancel {
+            background: white;
+            color: #333;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .custom-confirmation-popup .popup-btn-cancel:hover {
+            background: #f5f5f5;
+            transform: translateY(-2px);
+        }
+
+        .custom-confirmation-popup .popup-btn-ok {
+            background: #2E7D32;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .custom-confirmation-popup .popup-btn-ok:hover {
+            background: #1B5E20;
+            transform: translateY(-2px);
+        }
+
+        /* Auto-dismissing Green Success Popup Styles */
+        .auto-success-popup {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+            z-index: 10000;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            min-width: 250px;
+            max-width: 400px;
+            animation: slideInRight 0.3s ease-out, slideOutRight 0.3s ease-in 2.7s;
+            animation-fill-mode: forwards;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .auto-success-popup::before {
+            content: "✅";
+            font-size: 1.2rem;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* Custom Success Popup Styles */
+        .custom-success-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #4CAF50;
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-align: center;
+            min-width: 350px;
+            max-width: 500px;
+            animation: popupSlideIn 0.3s ease-out;
+        }
+
+        .custom-success-popup .popup-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .custom-success-popup .popup-message {
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .custom-success-popup .popup-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .custom-success-popup .popup-btn {
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .custom-success-popup .popup-btn-ok {
+            background: #2E7D32;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .custom-success-popup .popup-btn-ok:hover {
+            background: #1B5E20;
+            transform: translateY(-2px);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .agriculturists-container {
+                padding: 1rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-filter {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+
+            .agriculturists-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>Cropwise</h1>
+                <span class="leaf">🌿</span>
+            </div>
+            <nav>
+                <ul class="nav">
+                    <li><a href="/dashboard">HOME</a></li>
+                    <li><a href="/ai-assistant">AI ASSISTANT</a></li>
+                    <li><a href="/purchase">PURCHASE</a></li>
+                    <li><a href="/weather">WEATHER</a></li>
+                    <li><a href="/agriculturists" class="active">AGRICULTURISTS</a></li>
+                    <li><a href="faqs.html">FAQS</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <button class="profile-btn" onclick="window.location.href='/profile'" title="Profile">👤</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Title -->
+    <div class="page-title">
+        <h2>Agriculturists</h2>
+        <p>Connect with agricultural experts and specialists</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="agriculturists-container">
+        <!-- Controls -->
+        <div class="controls">
+            <div class="search-filter">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search agriculturists...">
+                <select class="filter-select" id="specializationFilter">
+                    <option value="">All Specializations</option>
+                    <option value="Crop Management">Crop Management</option>
+                    <option value="Soil Science">Soil Science</option>
+                    <option value="Horticulture">Horticulture</option>
+                    <option value="Livestock">Livestock</option>
+                    <option value="Pest Control">Pest Control</option>
+                    <option value="Irrigation">Irrigation</option>
+                    <option value="Organic Farming">Organic Farming</option>
+                </select>
+            </div>
+            <button class="enroll-btn" onclick="openEnrollmentModal()" id="enrollBtn">+ Enroll as Agriculturist</button>
+        </div>
+
+        <!-- Agriculturists Grid -->
+        <div class="agriculturists-grid" id="agriculturistsGrid">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading agriculturists...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enrollment Modal -->
+    <div id="enrollmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Enroll as Agriculturist</h3>
+                <button class="close-btn" onclick="closeEnrollmentModal()">&times;</button>
+            </div>
+            <form id="enrollmentForm">
+                <div class="form-group">
+                    <label class="form-label" for="fullName">Full Name:</label>
+                    <input type="text" class="form-input" id="fullName" name="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="location">Location:</label>
+                    <input type="text" class="form-input" id="location" name="location" placeholder="City, Country" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="specialization">Specialization:</label>
+                    <select class="form-input" id="specialization" name="specialization" required>
+                        <option value="">Select Specialization</option>
+                        <option value="Crop Management">Crop Management</option>
+                        <option value="Soil Science">Soil Science</option>
+                        <option value="Horticulture">Horticulture</option>
+                        <option value="Livestock">Livestock</option>
+                        <option value="Pest Control">Pest Control</option>
+                        <option value="Irrigation">Irrigation</option>
+                        <option value="Organic Farming">Organic Farming</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="experience">Experience (in years):</label>
+                    <input type="number" class="form-input" id="experience" name="experience" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="email">Email:</label>
+                    <input type="email" class="form-input" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="profileImage">Profile Image (Optional):</label>
+                    <input type="file" class="form-input" id="profileImage" name="profileImage" accept="image/*">
+                    <small style="color: #666; font-size: 0.9rem;">Recommended: Square image, max 2MB</small>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeEnrollmentModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Enroll</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Profile</h3>
+                <button class="close-btn" onclick="closeEditProfileModal()">&times;</button>
+            </div>
+            <form id="editProfileForm">
+                <input type="hidden" id="editAgriculturistId" name="id">
+                <div class="form-group">
+                    <label class="form-label" for="editFullName">Full Name:</label>
+                    <input type="text" class="form-input" id="editFullName" name="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editLocation">Location:</label>
+                    <input type="text" class="form-input" id="editLocation" name="location" placeholder="City, Country" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editSpecialization">Specialization:</label>
+                    <select class="form-input" id="editSpecialization" name="specialization" required>
+                        <option value="">Select Specialization</option>
+                        <option value="Crop Management">Crop Management</option>
+                        <option value="Soil Science">Soil Science</option>
+                        <option value="Horticulture">Horticulture</option>
+                        <option value="Livestock">Livestock</option>
+                        <option value="Pest Control">Pest Control</option>
+                        <option value="Irrigation">Irrigation</option>
+                        <option value="Organic Farming">Organic Farming</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editExperience">Experience (in years):</label>
+                    <input type="number" class="form-input" id="editExperience" name="experience" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editEmail">Email:</label>
+                    <input type="email" class="form-input" id="editEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editProfileImage">Profile Image (Optional):</label>
+                    <input type="file" class="form-input" id="editProfileImage" name="profileImage" accept="image/*">
+                    <small style="color: #666; font-size: 0.9rem;">Leave empty to keep current image</small>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditProfileModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let agriculturists = [];
+        let isAdmin = false;
+
+        // Custom popup function
+        function showCustomPopup(message) {
+            // Remove any existing popup
+            const existingPopup = document.querySelector('.custom-popup');
+            const existingOverlay = document.querySelector('.popup-overlay');
+            if (existingPopup) existingPopup.remove();
+            if (existingOverlay) existingOverlay.remove();
+
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'popup-overlay';
+
+            // Create popup
+            const popup = document.createElement('div');
+            popup.className = 'custom-popup';
+            popup.innerHTML = `
+                <div>${message}</div>
+                <button onclick="closeCustomPopup()">OK</button>
+            `;
+
+            // Add to page
+            document.body.appendChild(overlay);
+            document.body.appendChild(popup);
+
+            // Close on overlay click
+            overlay.addEventListener('click', closeCustomPopup);
+        }
+
+        function closeCustomPopup() {
+            const popup = document.querySelector('.custom-popup');
+            const overlay = document.querySelector('.popup-overlay');
+            if (popup) popup.remove();
+            if (overlay) overlay.remove();
+        }
+
+        // Custom confirmation popup functions
+        function showConfirmationPopup(title, message, onConfirm, onCancel) {
+            // Remove any existing popup
+            const existingPopup = document.querySelector('.custom-confirmation-popup');
+            const existingOverlay = document.querySelector('.popup-overlay');
+            if (existingPopup) existingPopup.remove();
+            if (existingOverlay) existingOverlay.remove();
+
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'popup-overlay';
+
+            // Create popup
+            const popup = document.createElement('div');
+            popup.className = 'custom-confirmation-popup';
+            popup.innerHTML = `
+                <div class="popup-title">${title}</div>
+                <div class="popup-message">${message}</div>
+                <div class="popup-buttons">
+                    <button class="popup-btn popup-btn-cancel" onclick="closeConfirmationPopup(false)">Cancel</button>
+                    <button class="popup-btn popup-btn-ok" onclick="closeConfirmationPopup(true)">OK</button>
+                </div>
+            `;
+
+            // Add to page
+            document.body.appendChild(overlay);
+            document.body.appendChild(popup);
+
+            // Store callbacks
+            popup._onConfirm = onConfirm;
+            popup._onCancel = onCancel;
+
+            // Close on overlay click
+            overlay.addEventListener('click', () => closeConfirmationPopup(false));
+        }
+
+        function closeConfirmationPopup(confirmed) {
+            const popup = document.querySelector('.custom-confirmation-popup');
+            const overlay = document.querySelector('.popup-overlay');
+            
+            if (popup) {
+                if (confirmed && popup._onConfirm) {
+                    popup._onConfirm();
+                } else if (!confirmed && popup._onCancel) {
+                    popup._onCancel();
+                }
+                popup.remove();
+            }
+            if (overlay) overlay.remove();
+        }
+
+        // Auto-dismissing green success popup function
+        function showAutoSuccessPopup(message) {
+            // Remove any existing auto popup
+            const existingPopup = document.querySelector('.auto-success-popup');
+            if (existingPopup) existingPopup.remove();
+
+            // Create popup
+            const popup = document.createElement('div');
+            popup.className = 'auto-success-popup';
+            popup.textContent = message;
+
+            // Add to page
+            document.body.appendChild(popup);
+
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                if (popup.parentNode) {
+                    popup.remove();
+                }
+            }, 3000);
+        }
+
+        // Custom success popup function
+        function showSuccessPopup(title, message, onOk) {
+            // Remove any existing popup
+            const existingPopup = document.querySelector('.custom-success-popup');
+            const existingOverlay = document.querySelector('.popup-overlay');
+            if (existingPopup) existingPopup.remove();
+            if (existingOverlay) existingOverlay.remove();
+
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'popup-overlay';
+
+            // Create popup
+            const popup = document.createElement('div');
+            popup.className = 'custom-success-popup';
+            popup.innerHTML = `
+                <div class="popup-title">${title}</div>
+                <div class="popup-message">${message}</div>
+                <div class="popup-buttons">
+                    <button class="popup-btn popup-btn-ok" onclick="closeSuccessPopup()">OK</button>
+                </div>
+            `;
+
+            // Add to page
+            document.body.appendChild(overlay);
+            document.body.appendChild(popup);
+
+            // Store callback
+            popup._onOk = onOk;
+
+            // Close on overlay click
+            overlay.addEventListener('click', () => closeSuccessPopup());
+        }
+
+        function closeSuccessPopup() {
+            const popup = document.querySelector('.custom-success-popup');
+            const overlay = document.querySelector('.popup-overlay');
+            
+            if (popup) {
+                if (popup._onOk) {
+                    popup._onOk();
+                }
+                popup.remove();
+            }
+            if (overlay) overlay.remove();
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAdminStatus();
+            loadAgriculturists();
+            setupEventListeners();
+        });
+
+        // Check if current user is admin
+        async function checkAdminStatus() {
+            const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+            if (currentUser) {
+                try {
+                    const response = await fetch(`/api/check-admin/${currentUser.email}`);
+                    const result = await response.json();
+                    isAdmin = result.isAdmin || false;
+                } catch (error) {
+                    console.error('Error checking admin status:', error);
+                }
+            }
+        }
+
+        // Load agriculturists from server
+        async function loadAgriculturists() {
+            try {
+                const response = await fetch('/api/agriculturists');
+                if (response.ok) {
+                    agriculturists = await response.json();
+                    displayAgriculturists(agriculturists);
+                    updateEnrollButton();
+                } else {
+                    showError('Failed to load agriculturists');
+                }
+            } catch (error) {
+                console.error('Error loading agriculturists:', error);
+                showError('Failed to load agriculturists');
+            }
+        }
+
+        // Update enroll button based on user's enrollment status
+        function updateEnrollButton() {
+            const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+            const enrollBtn = document.getElementById('enrollBtn');
+            
+            // Always keep the button active and green
+            enrollBtn.textContent = '+ Enroll as Agriculturist';
+            enrollBtn.style.background = '#2E7D32';
+            enrollBtn.style.cursor = 'pointer';
+            enrollBtn.onclick = openEnrollmentModal;
+        }
+
+        // Display agriculturists in grid
+        function displayAgriculturists(agriculturistsList) {
+            const grid = document.getElementById('agriculturistsGrid');
+            const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+            
+            if (agriculturistsList.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No agriculturists found</h3>
+                        <p>Be the first to enroll as an agriculturist!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const html = agriculturistsList.map(agriculturist => {
+                // Check if current user owns this profile
+                const isOwner = currentUser && agriculturist.email.toLowerCase() === currentUser.email.toLowerCase();
+                // Also check if the agriculturist was enrolled by the current user
+                const isEnrolledByUser = currentUser && agriculturist.enrolledBy && agriculturist.enrolledBy.toLowerCase() === currentUser.email.toLowerCase();
+                
+                const canEdit = isOwner || isEnrolledByUser || isAdmin;
+                const canDelete = isAdmin;
+                
+                // Debug logging
+                console.log('Agriculturist:', agriculturist.name, 'Email:', agriculturist.email, 'EnrolledBy:', agriculturist.enrolledBy);
+                console.log('Current User:', currentUser ? currentUser.email : 'No user');
+                console.log('Is Owner:', isOwner, 'Is Enrolled By User:', isEnrolledByUser, 'Can Edit:', canEdit);
+                
+                return `
+                    <div class="agriculturist-card">
+                        ${(canEdit || canDelete) ? `
+                            <div class="admin-actions">
+                                ${canEdit ? `
+                                    <button class="edit-btn" onclick="openEditProfileModal('${agriculturist.id}')" title="Edit Profile">
+                                        EDIT
+                                    </button>
+                                ` : ''}
+                                ${canDelete ? `
+                                    <button class="delete-btn" onclick="deleteAgriculturist('${agriculturist.id}')" title="Delete Agriculturist">
+                                    </button>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                        <img src="${agriculturist.profileImage || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxjaXJjbGUgY3g9IjUwIiBjeT0iMzUiIHI9IjE1IiBmaWxsPSIjNjY2NjY2Ii8+CjxwYXRoIGQ9Ik0yMCA4MEMyMCA2NS42NDA2IDMxLjY0MDYgNTQgNDYgNTRINTRDNjguMzU5NCA1NCA4MCA2NS42NDA2IDgwIDgwVjEwMEgyMFY4MFoiIGZpbGw9IiM2NjY2NjYiLz4KPC9zdmc+'}" 
+                             alt="${agriculturist.name}" 
+                             class="profile-image"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="profile-image-fallback" style="display: none; width: 100px; height: 100px; border-radius: 50%; background: #2E7D32; color: white; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; margin: 0 auto 1rem;">
+                            ${agriculturist.name.charAt(0).toUpperCase()}
+                        </div>
+                        <h3 class="agriculturist-name">${agriculturist.name}</h3>
+                        <div class="agriculturist-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Location:</span> ${agriculturist.location}
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Specialization:</span> 
+                                <span class="specialization-tag">${agriculturist.specialization}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Experience:</span> ${agriculturist.experience} years
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Email:</span> ${agriculturist.email}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            grid.innerHTML = html;
+        }
+
+        // Filter and search agriculturists
+        function filterAgriculturists() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const specialization = document.getElementById('specializationFilter').value;
+
+            const filtered = agriculturists.filter(agriculturist => {
+                const matchesSearch = agriculturist.name.toLowerCase().includes(searchTerm) ||
+                                    agriculturist.location.toLowerCase().includes(searchTerm) ||
+                                    agriculturist.specialization.toLowerCase().includes(searchTerm);
+                const matchesSpecialization = !specialization || agriculturist.specialization === specialization;
+                
+                return matchesSearch && matchesSpecialization;
+            });
+
+            displayAgriculturists(filtered);
+        }
+
+        // Open enrollment modal
+        function openEnrollmentModal() {
+            document.getElementById('enrollmentModal').style.display = 'block';
+        }
+
+        // Close enrollment modal
+        function closeEnrollmentModal() {
+            document.getElementById('enrollmentModal').style.display = 'none';
+            document.getElementById('enrollmentForm').reset();
+        }
+
+        // Open edit profile modal
+        function openEditProfileModal(agriculturistId) {
+            const agriculturist = agriculturists.find(a => a.id === agriculturistId);
+            if (!agriculturist) {
+                alert('Agriculturist not found');
+                return;
+            }
+
+            // Pre-fill the form with current data
+            document.getElementById('editAgriculturistId').value = agriculturist.id;
+            document.getElementById('editFullName').value = agriculturist.name;
+            document.getElementById('editLocation').value = agriculturist.location;
+            document.getElementById('editSpecialization').value = agriculturist.specialization;
+            document.getElementById('editExperience').value = agriculturist.experience;
+            document.getElementById('editEmail').value = agriculturist.email;
+
+            document.getElementById('editProfileModal').style.display = 'block';
+        }
+
+        // Close edit profile modal
+        function closeEditProfileModal() {
+            document.getElementById('editProfileModal').style.display = 'none';
+            document.getElementById('editProfileForm').reset();
+        }
+
+        // Handle enrollment form submission
+        document.getElementById('enrollmentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const email = formData.get('email');
+            
+            // Check if user is already enrolled with this email
+            const existingAgriculturist = agriculturists.find(a => a.email.toLowerCase() === email.toLowerCase());
+            if (existingAgriculturist) {
+                showCustomPopup('Profile already exists');
+                return;
+            }
+            
+            // Add current user email if available
+            const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+            if (currentUser) {
+                formData.append('enrolledBy', currentUser.email);
+            }
+            
+            try {
+                const response = await fetch('/api/agriculturists', {
+                    method: 'POST',
+                    body: formData // Send FormData directly for file upload
+                });
+
+                if (response.ok) {
+                    showSuccessPopup('Success!', 'Successfully enrolled as agriculturist!', () => {
+                        closeEnrollmentModal();
+                        // Refresh the list to show the new agriculturist with edit button
+                        loadAgriculturists();
+                    });
+                } else {
+                    const error = await response.json();
+                    if (error.existingProfile) {
+                        // Show simple message for duplicate enrollment
+                        showCustomPopup('Profile already exists');
+                    } else {
+                        showCustomPopup('Error: ' + (error.message || 'Failed to enroll'));
+                    }
+                }
+            } catch (error) {
+                console.error('Error enrolling:', error);
+                alert('Failed to enroll. Please try again.');
+            }
+        });
+
+        // Handle edit profile form submission
+        document.getElementById('editProfileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const agriculturistId = formData.get('id');
+            
+            try {
+                const response = await fetch(`/api/agriculturists/${agriculturistId}`, {
+                    method: 'PUT',
+                    body: formData // Send FormData directly for file upload
+                });
+
+                if (response.ok) {
+                    showAutoSuccessPopup('Profile updated successfully!');
+                    closeEditProfileModal();
+                    loadAgriculturists(); // Refresh the list
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + (error.message || 'Failed to update profile'));
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                alert('Failed to update profile. Please try again.');
+            }
+        });
+
+        // Delete agriculturist (admin only)
+        async function deleteAgriculturist(id) {
+            if (!isAdmin) {
+                alert('Only admins can delete agriculturists');
+                return;
+            }
+
+            showConfirmationPopup(
+                'Delete Agriculturist',
+                'Are you sure you want to delete this agriculturist?',
+                async () => {
+                    try {
+                        const response = await fetch(`/api/agriculturists/${id}`, {
+                            method: 'DELETE'
+                        });
+
+                        if (response.ok) {
+                            showSuccessPopup('Success!', 'Agriculturist deleted successfully', () => {
+                                loadAgriculturists(); // Refresh the list
+                            });
+                        } else {
+                            alert('Failed to delete agriculturist');
+                        }
+                    } catch (error) {
+                        console.error('Error deleting agriculturist:', error);
+                        alert('Failed to delete agriculturist');
+                    }
+                },
+                () => {
+                    // Cancel action - do nothing
+                }
+            );
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', filterAgriculturists);
+            document.getElementById('specializationFilter').addEventListener('change', filterAgriculturists);
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                const enrollmentModal = document.getElementById('enrollmentModal');
+                const editModal = document.getElementById('editProfileModal');
+                
+                if (e.target === enrollmentModal) {
+                    closeEnrollmentModal();
+                } else if (e.target === editModal) {
+                    closeEditProfileModal();
+                }
+            });
+        }
+
+        // Show error message
+        function showError(message) {
+            const grid = document.getElementById('agriculturistsGrid');
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <h3>Error</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

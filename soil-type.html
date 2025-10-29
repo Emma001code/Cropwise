@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soil Type - Cropwise</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('images/soil type and season wise.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.85);
+            z-index: -1;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 3rem;
+            color: #2e7d32;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .soil-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .soil-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .soil-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+        }
+
+        .soil-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .soil-card.clay::before {
+            background: linear-gradient(90deg, #8d6e63, #a1887f);
+        }
+
+        .soil-card.sandy::before {
+            background: linear-gradient(90deg, #ffb74d, #ffcc02);
+        }
+
+        .soil-card.loamy::before {
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+        }
+
+        .soil-card.silty::before {
+            background: linear-gradient(90deg, #9e9e9e, #bdbdbd);
+        }
+
+        .soil-card.peaty::before {
+            background: linear-gradient(90deg, #795548, #8d6e63);
+        }
+
+        .soil-card.chalky::before {
+            background: linear-gradient(90deg, #f5f5f5, #e0e0e0);
+        }
+
+        .soil-header {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+
+        .soil-info h2 {
+            color: #2e7d32;
+            font-size: 1.8rem;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .soil-info .characteristics {
+            color: #666;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .soil-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .crops-section h3 {
+            color: #2e7d32;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .crops-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.8rem;
+        }
+
+        .crop-item {
+            background: linear-gradient(135deg, #f8f9fa, #e8f5e8);
+            padding: 0.8rem;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+            color: #2e7d32;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .crop-item:hover {
+            border-color: #4caf50;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
+        }
+
+        .soil-properties {
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .soil-properties h4 {
+            color: #1976d2;
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+        }
+
+        .soil-properties p {
+            margin: 0;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .testing-section {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-top: 3rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .testing-section h2 {
+            color: #e65100;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .testing-section p {
+            color: #555;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .testing-tips {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .testing-tip {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .testing-tip h3 {
+            color: #e65100;
+            margin-bottom: 0.5rem;
+        }
+
+        .testing-tip p {
+            color: #666;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                background-attachment: scroll;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .soil-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .soil-card {
+                padding: 1.5rem;
+            }
+
+            .soil-header {
+                text-align: center;
+            }
+
+            .crops-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+
+            .testing-tips {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>Cropwise 🌿</h1>
+            </div>
+            <a href="javascript:void(0)" class="back-btn" onclick="goBackToDashboard()">← Back to Dashboard</a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1>Soil Type</h1>
+            <p>Learn about diverse soil types and their suitability for various crops. Get expert advice on soil management, testing, and crop selection for optimal yields.</p>
+        </div>
+
+        <div class="soil-grid">
+            <!-- Clay Soil -->
+            <div class="soil-card clay">
+                <div class="soil-header">
+                    <div class="soil-info">
+                        <h2>Clay Soil</h2>
+                        <p class="characteristics">Fine particles, high water retention</p>
+                    </div>
+                </div>
+                <div class="soil-description">
+                    Clay soil has the smallest particles and holds water well. It's rich in nutrients but can be difficult to work with due to its density and poor drainage.
+                </div>
+                <div class="crops-section">
+                    <h3>Suitable Crops</h3>
+                    <div class="crops-grid">
+                        <div class="crop-item">Rice</div>
+                        <div class="crop-item">Wheat</div>
+                        <div class="crop-item">Barley</div>
+                        <div class="crop-item">Oats</div>
+                        <div class="crop-item">Corn</div>
+                        <div class="crop-item">Soybeans</div>
+                        <div class="crop-item">Cabbage</div>
+                        <div class="crop-item">Broccoli</div>
+                    </div>
+                </div>
+                <div class="soil-properties">
+                    <h4>Key Properties</h4>
+                    <p>High water retention, slow drainage, rich in nutrients, compact when dry, sticky when wet.</p>
+                </div>
+            </div>
+
+            <!-- Sandy Soil -->
+            <div class="soil-card sandy">
+                <div class="soil-header">
+                    <div class="soil-info">
+                        <h2>Sandy Soil</h2>
+                        <p class="characteristics">Large particles, excellent drainage</p>
+                    </div>
+                </div>
+                <div class="soil-description">
+                    Sandy soil has large particles and drains quickly. It's easy to work with but requires frequent watering and fertilization as nutrients wash away easily.
+                </div>
+                <div class="crops-section">
+                    <h3>Suitable Crops</h3>
+                    <div class="crops-grid">
+                        <div class="crop-item">Carrots</div>
+                        <div class="crop-item">Potatoes</div>
+                        <div class="crop-item">Lettuce</div>
+                        <div class="crop-item">Strawberries</div>
+                        <div class="crop-item">Tomatoes</div>
+                        <div class="crop-item">Peppers</div>
+                        <div class="crop-item">Cucumbers</div>
+                        <div class="crop-item">Melons</div>
+                    </div>
+                </div>
+                <div class="soil-properties">
+                    <h4>Key Properties</h4>
+                    <p>Fast drainage, low water retention, easy to work, warms quickly, requires frequent watering.</p>
+                </div>
+            </div>
+
+            <!-- Loamy Soil -->
+            <div class="soil-card loamy">
+                <div class="soil-header">
+                    <div class="soil-info">
+                        <h2>Loamy Soil</h2>
+                        <p class="characteristics">Perfect balance, ideal for most crops</p>
+                    </div>
+                </div>
+                <div class="soil-description">
+                    Loamy soil is the ideal soil type, combining the best properties of sand, silt, and clay. It has excellent drainage, good water retention, and is rich in nutrients.
+                </div>
+                <div class="crops-section">
+                    <h3>Suitable Crops</h3>
+                    <div class="crops-grid">
+                        <div class="crop-item">Most Vegetables</div>
+                        <div class="crop-item">Fruit Trees</div>
+                        <div class="crop-item">Flowers</div>
+                        <div class="crop-item">Herbs</div>
+                        <div class="crop-item">Grains</div>
+                        <div class="crop-item">Legumes</div>
+                        <div class="crop-item">Root Crops</div>
+                        <div class="crop-item">Leafy Greens</div>
+                    </div>
+                </div>
+                <div class="soil-properties">
+                    <h4>Key Properties</h4>
+                    <p>Balanced drainage, good water retention, rich in nutrients, easy to work, ideal pH levels.</p>
+                </div>
+            </div>
+
+            <!-- Silty Soil -->
+            <div class="soil-card silty">
+                <div class="soil-header">
+                    <div class="soil-info">
+                        <h2>Silty Soil</h2>
+                        <p class="characteristics">Medium particles, smooth texture</p>
+                    </div>
+                </div>
+                <div class="soil-description">
+                    Silty soil has medium-sized particles and feels smooth to the touch. It holds water well and is fertile, making it good for many crops.
+                </div>
+                <div class="crops-section">
+                    <h3>Suitable Crops</h3>
+                    <div class="crops-grid">
+                        <div class="crop-item">Corn</div>
+                        <div class="crop-item">Wheat</div>
+                        <div class="crop-item">Rice</div>
+                        <div class="crop-item">Barley</div>
+                        <div class="crop-item">Oats</div>
+                        <div class="crop-item">Soybeans</div>
+                        <div class="crop-item">Sunflowers</div>
+                        <div class="crop-item">Canola</div>
+                    </div>
+                </div>
+                <div class="soil-properties">
+                    <h4>Key Properties</h4>
+                    <p>Medium drainage, good water retention, fertile, smooth texture, holds nutrients well.</p>
+                </div>
+            </div>
+
+            <!-- Peaty Soil -->
+            <div class="soil-card peaty">
+                <div class="soil-header">
+                    <div class="soil-info">
+                        <h2>Peaty Soil</h2>
+                        <p class="characteristics">High organic matter, acidic</p>
+                    </div>
+                </div>
+                <div class="soil-description">
+                    Peaty soil is rich in organic matter and has a dark color. It's acidic and holds water well, but may need pH adjustment for some crops.
+                </div>
+                <div class="crops-section">
+                    <h3>Suitable Crops</h3>
+                    <div class="crops-grid">
+                        <div class="crop-item">Blueberries</div>
+                        <div class="crop-item">Cranberries</div>
+                        <div class="crop-item">Potatoes</div>
+                        <div class="crop-item">Carrots</div>
+                        <div class="crop-item">Lettuce</div>
+                        <div class="crop-item">Spinach</div>
+                        <div class="crop-item">Cabbage</div>
+                        <div class="crop-item">Herbs</div>
+                    </div>
+                </div>
+                <div class="soil-properties">
+                    <h4>Key Properties</h4>
+                    <p>High organic matter, acidic pH, excellent water retention, dark color, rich in nutrients.</p>
+                </div>
+            </div>
+
+            <!-- Chalky Soil -->
+            <div class="soil-card chalky">
+                <div class="soil-header">
+                    <div class="soil-info">
+                        <h2>Chalky Soil</h2>
+                        <p class="characteristics">Alkaline, free-draining</p>
+                    </div>
+                </div>
+                <div class="soil-description">
+                    Chalky soil is alkaline and free-draining. It's often shallow and stony, requiring careful crop selection and regular pH monitoring.
+                </div>
+                <div class="crops-section">
+                    <h3>Suitable Crops</h3>
+                    <div class="crops-grid">
+                        <div class="crop-item">Lavender</div>
+                        <div class="crop-item">Rosemary</div>
+                        <div class="crop-item">Thyme</div>
+                        <div class="crop-item">Sage</div>
+                        <div class="crop-item">Oregano</div>
+                        <div class="crop-item">Brassicas</div>
+                        <div class="crop-item">Legumes</div>
+                        <div class="crop-item">Grasses</div>
+                    </div>
+                </div>
+                <div class="soil-properties">
+                    <h4>Key Properties</h4>
+                    <p>Alkaline pH, free-draining, often shallow, stony texture, low organic matter.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="testing-section">
+            <h2>Soil Testing Guide</h2>
+            <p>Understanding your soil type is crucial for successful farming. Here are some methods to test and improve your soil:</p>
+            
+            <div class="testing-tips">
+                <div class="testing-tip">
+                    <h3>Visual Test</h3>
+                    <p>Observe soil color, texture, and structure. Dark soil usually indicates high organic matter.</p>
+                </div>
+                <div class="testing-tip">
+                    <h3>Feel Test</h3>
+                    <p>Rub soil between fingers. Sandy feels gritty, clay feels sticky, loam feels smooth.</p>
+                </div>
+                <div class="testing-tip">
+                    <h3>Water Test</h3>
+                    <p>Pour water on soil. Sandy drains quickly, clay pools, loam drains moderately.</p>
+                </div>
+                <div class="testing-tip">
+                    <h3>pH Test</h3>
+                    <p>Use pH test strips or kits to determine acidity/alkalinity levels for crop selection.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Back to dashboard function with token
+        function goBackToDashboard() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            if (token) {
+                window.location.href = 'dashboard.html?token=' + token;
+            } else {
+                // If no token, check localStorage for user data
+                const user = localStorage.getItem('user');
+                if (user) {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    window.location.href = 'login.html';
+                }
+            }
+        }
+
+        // Add smooth scrolling and interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.soil-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Add click animation to crop items
+            const cropItems = document.querySelectorAll('.crop-item');
+            cropItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+
+            // Add hover effects to testing tips
+            const testingTips = document.querySelectorAll('.testing-tip');
+            testingTips.forEach(tip => {
+                tip.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
+                });
+                
+                tip.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

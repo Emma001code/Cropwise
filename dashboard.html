@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cropwise - Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .dashboard-container {
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+        
+        .header {
+            background: #2E7D32;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .logo .leaf {
+            font-size: 1.5rem;
+        }
+        
+        .nav {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+        
+        .nav a:hover,
+        .nav a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .cart-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cart-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+        }
+        
+        .user-menu {
+            position: relative;
+        }
+        
+        .hamburger-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        
+        .hamburger-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .hamburger-line {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .hamburger-btn.active .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .hamburger-btn.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger-btn.active .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+        
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            min-width: 150px;
+            z-index: 1000;
+            display: none;
+            pointer-events: auto;
+            margin-top: 5px;
+        }
+        
+        .dropdown.show {
+            display: block !important;
+        }
+        
+        .dropdown a {
+            display: block;
+            padding: 1rem;
+            color: #333;
+            text-decoration: none;
+            transition: background 0.3s ease;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        
+        .dropdown a:hover {
+            background: #f8f9fa;
+            color: #4CAF50;
+        }
+        
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .welcome-section {
+            text-align: center;
+            margin: 3rem 0;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .welcome-section h2 {
+            font-size: 2.5rem;
+            color: #2E7D32;
+            margin-bottom: 1rem;
+        }
+        
+        .welcome-section p {
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        .recommendations-section {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            backdrop-filter: blur(5px);
+        }
+        
+        .recommendations-section h3 {
+            color: #2e7d32;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .card-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #2e7d32;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        
+        .feature-card:hover .card-image {
+            transform: scale(1.3);
+            box-shadow: 0 8px 16px rgba(46, 125, 50, 0.4);
+        }
+        
+        .feature-card:active .card-image {
+            transform: scale(0.95);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            color: #2E7D32;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .image-carousel {
+            margin: -2rem calc(-50vw + 50%) 2rem calc(-50vw + 50%);
+            width: 100vw;
+            border-radius: 0;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            position: relative;
+        }
+        
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: url('images/360_F_483535593_UUt2d2FRpRlqLmACSrhsuRxOBiZbi7DF (1).jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        .carousel-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.05));
+            z-index: 1;
+        }
+        
+        .carousel-slides {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .slide.active {
+            opacity: 1;
+        }
+        
+        .slide img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 15px;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .carousel-controls {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 2rem;
+            pointer-events: none;
+            z-index: 3;
+        }
+        
+        .carousel-btn {
+            background: rgba(255,255,255,0.9);
+            color: #2e7d32;
+            border: 2px solid rgba(46, 125, 50, 0.3);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            pointer-events: all;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .carousel-btn:hover {
+            background: #2e7d32;
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .carousel-indicators {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.8rem;
+            z-index: 3;
+        }
+        
+        .indicator {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.6);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .indicator.active {
+            background: white;
+            border-color: #2e7d32;
+            transform: scale(1.3);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .indicator:hover {
+            background: rgba(255,255,255,0.9);
+            transform: scale(1.1);
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .logo {
+                justify-content: center;
+                margin-bottom: 0.5rem;
+            }
+            
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+            
+            .nav {
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .nav a {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+                border-radius: 20px;
+            }
+            
+            .header-actions {
+                align-self: center;
+                gap: 0.5rem;
+            }
+            
+            .cart-btn {
+                font-size: 1rem;
+                padding: 0.4rem;
+            }
+            
+            .cart-count {
+                width: 18px;
+                height: 18px;
+                font-size: 0.65rem;
+            }
+            
+            .user-menu {
+                align-self: center;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .welcome-section h2 {
+                font-size: 1.8rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .welcome-section p {
+                font-size: 1rem;
+            }
+            
+            .recommendations-section h3 {
+                font-size: 1.5rem;
+            }
+            
+            .image-carousel {
+                margin: -1rem calc(-50vw + 50%) 1.5rem calc(-50vw + 50%);
+                width: 100vw;
+            }
+            
+            .carousel-container {
+                height: 350px;
+                background-attachment: scroll;
+            }
+            
+            .carousel-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+            
+            .indicator {
+                width: 10px;
+                height: 10px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .feature-card {
+                padding: 1.5rem;
+            }
+            
+            .feature-card h3 {
+                font-size: 1.3rem;
+            }
+            
+            .feature-card p {
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+            
+            .feature-icon {
+                font-size: 2.5rem;
+            }
+            
+            .card-image {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .feature-card:hover .card-image {
+                transform: scale(1.2);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 0.8rem;
+            }
+            
+            .logo h1 {
+                font-size: 1.3rem;
+            }
+            
+            .nav {
+                gap: 0.3rem;
+            }
+            
+            .nav a {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.8rem;
+            }
+            
+            .header-actions {
+                gap: 0.3rem;
+            }
+            
+            .cart-btn {
+                font-size: 0.9rem;
+                padding: 0.3rem;
+            }
+            
+            .cart-count {
+                width: 16px;
+                height: 16px;
+                font-size: 0.6rem;
+            }
+            
+            .main-content {
+                padding: 0.8rem;
+            }
+            
+            .welcome-section h2 {
+                font-size: 1.5rem;
+            }
+            
+            .recommendations-section h3 {
+                font-size: 1.3rem;
+            }
+            
+            .image-carousel {
+                margin: -0.8rem calc(-50vw + 50%) 1rem calc(-50vw + 50%);
+                width: 100vw;
+            }
+            
+            .carousel-container {
+                height: 300px;
+                background-attachment: scroll;
+            }
+            
+            .carousel-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+            
+            .indicator {
+                width: 8px;
+                height: 8px;
+            }
+            
+            .feature-card {
+                padding: 1.2rem;
+            }
+            
+            .feature-card h3 {
+                font-size: 1.2rem;
+            }
+            
+            .feature-card p {
+                font-size: 0.85rem;
+            }
+            
+            .feature-icon {
+                font-size: 2rem;
+            }
+            
+            .card-image {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .feature-card:hover .card-image {
+                transform: scale(1.2);
+            }
+        }
+
+        /* Custom Logout Confirmation Popup Styles */
+        .logout-confirmation-popup {
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            background: #4CAF50 !important;
+            color: white !important;
+            padding: 2rem !important;
+            border-radius: 15px !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+            z-index: 10000 !important;
+            font-size: 1.1rem !important;
+            font-weight: 500 !important;
+            text-align: center !important;
+            min-width: 350px !important;
+            max-width: 500px !important;
+            animation: popupSlideIn 0.3s ease-out !important;
+        }
+
+        .logout-confirmation-popup .popup-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .logout-confirmation-popup .popup-message {
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .logout-confirmation-popup .popup-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .logout-confirmation-popup .popup-btn {
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .logout-confirmation-popup .popup-btn-cancel {
+            background: white !important;
+            color: #333 !important;
+            border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        }
+
+        .logout-confirmation-popup .popup-btn-cancel:hover {
+            background: #f5f5f5;
+            transform: translateY(-2px);
+        }
+
+        .logout-confirmation-popup .popup-btn-ok {
+            background: #2E7D32 !important;
+            color: white !important;
+            border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        }
+
+        .logout-confirmation-popup .popup-btn-ok:hover {
+            background: #1B5E20;
+            transform: translateY(-2px);
+        }
+
+        .logout-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes popupSlideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Crop Wise</h1>
+                    <span class="leaf">🌿</span>
+                </div>
+                
+                <nav>
+                    <ul class="nav">
+                        <li><a href="#" class="active">HOME</a></li>
+                        <li><a href="/ai-assistant">AI ASSISTANT</a></li>
+                        <li><a href="/purchase">PURCHASE</a></li>
+                        <li><a href="/weather">WEATHER</a></li>
+                        <li><a href="agriculturists.html">AGRICULTURISTS</a></li>
+                        <li><a href="faqs.html">FAQS</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions">
+                    <button class="cart-btn" id="cartBtn" title="Shopping Cart">
+                        🛒
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                    
+                    <div class="user-menu">
+                        <button class="hamburger-btn" id="hamburgerBtn">
+                            <div class="hamburger-line"></div>
+                            <div class="hamburger-line"></div>
+                            <div class="hamburger-line"></div>
+                        </button>
+                        <div class="dropdown" id="userDropdown">
+                            <a href="javascript:void(0)" id="profileLink">PROFILE</a>
+                            <a href="javascript:void(0)" id="logoutLink">LOGOUT</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="image-carousel">
+                <div class="carousel-container">
+                    <div class="carousel-slides" id="carouselSlides">
+                        <div class="slide active">
+                            <img src="images/image 1.png" alt="Agricultural Image 1">
+                        </div>
+                        <div class="slide">
+                            <img src="images/image 2.jpg" alt="Agricultural Image 2">
+                        </div>
+                        <div class="slide">
+                            <img src="images/image 3.jpg" alt="Agricultural Image 3">
+                        </div>
+                        <div class="slide">
+                            <img src="images/image 4.webp" alt="Agricultural Image 4">
+                        </div>
+                        <div class="slide">
+                            <img src="images/image 5.jpg" alt="Agricultural Image 5">
+                        </div>
+                        <div class="slide">
+                            <img src="images/image 6.jpg" alt="Agricultural Image 6">
+                        </div>
+                    </div>
+                    
+                    <div class="carousel-controls">
+                        <button class="carousel-btn prev" id="prevBtn">❮</button>
+                        <button class="carousel-btn next" id="nextBtn">❯</button>
+                    </div>
+                    
+                    <div class="carousel-indicators" id="carouselIndicators">
+                        <span class="indicator active" data-slide="0"></span>
+                        <span class="indicator" data-slide="1"></span>
+                        <span class="indicator" data-slide="2"></span>
+                        <span class="indicator" data-slide="3"></span>
+                        <span class="indicator" data-slide="4"></span>
+                        <span class="indicator" data-slide="5"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="welcome-section">
+                <h2>CROP WISE</h2>
+                <p>Farming is not merely a profession, it's a way of life. A legacy passed down through generations. It's a journey of hard work, dedication, and an unbreakable connection with the land. Our farmers are the unsung heroes of our world, feeding not just our stomachs, but our hopes and dreams as well. Agriculture is the backbone of our global economy and the foundation of human civilization. We are passionate about empowering farmers and agriculturists with the tools, knowledge, and resources they need to thrive in an ever-evolving industry.</p>
+            </div>
+            
+            <div class="recommendations-section">
+                <h3>Recommendations & Services</h3>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card" onclick="navigateTo('season-wise.html')">
+                    <div class="feature-icon">
+                        <img src="images/season wise.jpeg" alt="Season Wise" class="card-image">
+                    </div>
+                    <h3>Season Wise</h3>
+                    <p>Discover the best crops to cultivate in different seasons worldwide. Get detailed information about seasonal crops suitable for your region and climate conditions.</p>
+                </div>
+                
+                <div class="feature-card" onclick="navigateTo('soil-type.html')">
+                    <div class="feature-icon">
+                        <img src="images/soil type image.webp" alt="Soil Type" class="card-image">
+                    </div>
+                    <h3>Soil Type</h3>
+                    <p>Learn about diverse soil types and their suitability for various crops. Get expert advice on soil management, testing, and crop selection for optimal yields.</p>
+                </div>
+                
+                <div class="feature-card" onclick="navigateTo('purchase.html')">
+                    <div class="feature-icon">
+                        <img src="images/cart dsh.png" alt="Purchase Supplies" class="card-image">
+                    </div>
+                    <h3>Purchase Supplies</h3>
+                    <p>Buy quality seeds, fertilizers, and pesticides from trusted suppliers. Get the best prices and delivery options.</p>
+                </div>
+                
+                <div class="feature-card" onclick="navigateTo('weather.html')">
+                    <div class="feature-icon">
+                        <img src="images/weather.jpg" alt="Weather Updates" class="card-image">
+                    </div>
+                    <h3>Weather Updates</h3>
+                    <p>Stay informed about weather conditions that affect your farming. Get alerts and recommendations.</p>
+                </div>
+                
+                <div class="feature-card" onclick="navigateTo('agriculturists.html')">
+                    <div class="feature-icon">
+                        <img src="images/nertwork.jpg" alt="Expert Network" class="card-image">
+                    </div>
+                    <h3>Expert Network</h3>
+                    <p>Connect with agricultural experts and fellow farmers. Get personalized advice and share experiences.</p>
+                </div>
+                
+                <div class="feature-card" onclick="navigateTo('faqs.html')">
+                    <div class="feature-icon">
+                        <img src="images/support.jpg" alt="Help & Support" class="card-image">
+                    </div>
+                    <h3>Help & Support</h3>
+                    <p>Find answers to common questions and get support when you need it. We're here to help you succeed.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Dashboard is now publicly accessible (like original HTML version)
+        console.log('Dashboard loaded successfully');
+        
+        // Custom logout confirmation popup functions
+        function showLogoutConfirmation() {
+            console.log('showLogoutConfirmation called');
+            // Remove any existing popup
+            const existingPopup = document.querySelector('.logout-confirmation-popup');
+            const existingOverlay = document.querySelector('.logout-popup-overlay');
+            if (existingPopup) existingPopup.remove();
+            if (existingOverlay) existingOverlay.remove();
+
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'logout-popup-overlay';
+
+            // Create popup
+            const popup = document.createElement('div');
+            popup.className = 'logout-confirmation-popup';
+            popup.innerHTML = `
+                <div class="popup-title">Logout Confirmation</div>
+                <div class="popup-message">Are you sure you want to logout?</div>
+                <div class="popup-buttons">
+                    <button class="popup-btn popup-btn-cancel" onclick="closeLogoutConfirmation(false)">Cancel</button>
+                    <button class="popup-btn popup-btn-ok" onclick="closeLogoutConfirmation(true)">OK</button>
+                </div>
+            `;
+
+            // Add to page
+            document.body.appendChild(overlay);
+            document.body.appendChild(popup);
+            console.log('Logout popup created and added to page');
+
+            // Close on overlay click
+            overlay.addEventListener('click', () => closeLogoutConfirmation(false));
+        }
+
+        function closeLogoutConfirmation(confirmed) {
+            const popup = document.querySelector('.logout-confirmation-popup');
+            const overlay = document.querySelector('.logout-popup-overlay');
+            
+            if (popup) popup.remove();
+            if (overlay) overlay.remove();
+            
+            if (confirmed) {
+                // Perform logout
+                localStorage.removeItem('user');
+                window.location.href = 'login.html';
+            }
+        }
+        
+        // Cart functionality
+        function updateCartCount() {
+            const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+            let cartItems = [];
+            
+            if (currentUser) {
+                cartItems = JSON.parse(localStorage.getItem(`cart_${currentUser.email}`) || '[]');
+            }
+            
+            const cartCountElement = document.getElementById('cartCount');
+            if (cartCountElement) {
+                cartCountElement.textContent = cartItems.length;
+                cartCountElement.style.display = cartItems.length > 0 ? 'flex' : 'none';
+            }
+        }
+        
+        // Wait for DOM to load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, setting up hamburger menu');
+            
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const dropdown = document.getElementById('userDropdown');
+            const profileLink = document.getElementById('profileLink');
+            const logoutLink = document.getElementById('logoutLink');
+            const cartBtn = document.getElementById('cartBtn');
+            const cartCount = document.getElementById('cartCount');
+            
+            console.log('Elements found:', {
+                hamburgerBtn: !!hamburgerBtn,
+                dropdown: !!dropdown,
+                profileLink: !!profileLink,
+                logoutLink: !!logoutLink,
+                cartBtn: !!cartBtn,
+                cartCount: !!cartCount
+            });
+            
+            // Initialize cart
+            let cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+            updateCartCount();
+            
+            // Hamburger click handler
+            hamburgerBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log('Hamburger clicked!');
+                
+                dropdown.classList.toggle('show');
+                hamburgerBtn.classList.toggle('active');
+                
+                console.log('Dropdown classes:', dropdown.className);
+                console.log('Hamburger active:', hamburgerBtn.classList.contains('active'));
+            });
+            
+            // Profile click handler
+            profileLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Profile clicked!');
+                window.location.href = '/profile';
+            });
+            
+            // Logout click handler
+            logoutLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Logout clicked!');
+                console.log('About to call showLogoutConfirmation');
+                showLogoutConfirmation();
+            });
+            
+            // Cart click handler
+            cartBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Cart clicked!');
+                // Redirect to purchase page to view cart
+                window.location.href = '/purchase';
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!hamburgerBtn.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                    hamburgerBtn.classList.remove('active');
+                }
+            });
+            
+            // Prevent dropdown from closing when clicking inside it
+            dropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+        
+        // Navigation function
+        function navigateTo(page) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            if (token) {
+                window.location.href = page + '?token=' + token;
+            } else {
+                window.location.href = page;
+            }
+        }
+        
+        // Carousel functionality
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const indicators = document.querySelectorAll('.indicator');
+        const totalSlides = slides.length;
+        
+        function showSlide(index) {
+            // Remove active class from all slides and indicators
+            slides.forEach(slide => slide.classList.remove('active'));
+            indicators.forEach(indicator => indicator.classList.remove('active'));
+            
+            // Add active class to current slide and indicator
+            slides[index].classList.add('active');
+            indicators[index].classList.add('active');
+            
+            currentSlide = index;
+        }
+        
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            showSlide(currentSlide);
+        }
+        
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            showSlide(currentSlide);
+        }
+        
+        function goToSlide(index) {
+            showSlide(index);
+        }
+        
+        // Initialize carousel
+        function initCarousel() {
+            // Set up event listeners
+            document.getElementById('nextBtn').addEventListener('click', nextSlide);
+            document.getElementById('prevBtn').addEventListener('click', prevSlide);
+            
+            // Set up indicator clicks
+            indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => goToSlide(index));
+            });
+            
+            // Auto-advance slides every 5 seconds
+            setInterval(nextSlide, 5000);
+            
+            // Initialize with first slide
+            showSlide(0);
+        }
+        
+        // Initialize carousel when page loads
+        document.addEventListener('DOMContentLoaded', initCarousel);
+    </script>
+</body>
+</html>

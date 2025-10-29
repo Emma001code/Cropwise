@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Season Wise - Cropwise</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('images/soil type and season wise.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.85);
+            z-index: -1;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 3rem;
+            color: #2e7d32;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .seasons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (min-width: 1200px) {
+            .seasons-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .season-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .season-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+        }
+
+        .season-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .season-header {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .season-info h2 {
+            color: #2e7d32;
+            font-size: 1.8rem;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .season-info .period {
+            color: #666;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .season-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .crops-section h3 {
+            color: #2e7d32;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .crops-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.8rem;
+        }
+
+        .crop-item {
+            background: linear-gradient(135deg, #f8f9fa, #e8f5e8);
+            padding: 0.8rem;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+            color: #2e7d32;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .crop-item:hover {
+            border-color: #4caf50;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
+        }
+
+        .weather-conditions {
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .weather-conditions h4 {
+            color: #1976d2;
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+        }
+
+        .weather-conditions p {
+            margin: 0;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                background-attachment: scroll;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .seasons-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .season-card {
+                padding: 1.5rem;
+            }
+
+            .season-header {
+                text-align: center;
+            }
+
+            .crops-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>Cropwise 🌿</h1>
+            </div>
+            <a href="javascript:void(0)" class="back-btn" onclick="goBackToDashboard()">← Back to Dashboard</a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1>Season Wise</h1>
+            <p>Discover the best crops to cultivate in different seasons worldwide. Plan your planting schedule effectively based on seasonal conditions and crop requirements.</p>
+        </div>
+
+        <div class="seasons-grid">
+            <!-- Spring Season -->
+            <div class="season-card">
+                <div class="season-header">
+                    <div class="season-info">
+                        <h2>Spring Season</h2>
+                        <p class="period">March - May</p>
+                    </div>
+                </div>
+                <div class="season-description">
+                    Spring is the perfect time for planting as the soil warms up and moisture levels are ideal. This season offers optimal growing conditions for many crops.
+                </div>
+                <div class="crops-section">
+                    <h3>Recommended Crops</h3>
+                    <div class="crops-grid">
+                        <div class="crop-item">Tomatoes</div>
+                        <div class="crop-item">Lettuce</div>
+                        <div class="crop-item">Carrots</div>
+                        <div class="crop-item">Peas</div>
+                        <div class="crop-item">Spinach</div>
+                        <div class="crop-item">Radishes</div>
+                        <div class="crop-item">Broccoli</div>
+                        <div class="crop-item">Cabbage</div>
+                    </div>
+                </div>
+                <div class="weather-conditions">
+                    <h4>Ideal Conditions</h4>
+                    <p>Mild temperatures (15-25°C), moderate rainfall, and increasing daylight hours provide perfect growing conditions.</p>
+                </div>
+            </div>
+
+            <!-- Summer Season -->
+            <div class="season-card">
+                <div class="season-header">
+                    <div class="season-info">
+                        <h2>Summer Season</h2>
+                        <p class="period">June - August</p>
+                    </div>
+                </div>
+                <div class="season-description">
+                    Summer provides long, warm days perfect for heat-loving crops. Adequate irrigation is essential during this hot season.
+                </div>
+                <div class="crops-section">
+                    <h3>Recommended Crops</h3>
+                    <div class="crops-grid">
+                        <div class="crop-item">Corn</div>
+                        <div class="crop-item">Beans</div>
+                        <div class="crop-item">Squash</div>
+                        <div class="crop-item">Peppers</div>
+                        <div class="crop-item">Cucumbers</div>
+                        <div class="crop-item">Melons</div>
+                        <div class="crop-item">Okra</div>
+                        <div class="crop-item">Eggplant</div>
+                    </div>
+                </div>
+                <div class="weather-conditions">
+                    <h4>Ideal Conditions</h4>
+                    <p>Warm temperatures (25-35°C), long daylight hours, and regular watering are essential for summer crops.</p>
+                </div>
+            </div>
+
+            <!-- Autumn/Fall Season -->
+            <div class="season-card">
+                <div class="season-header">
+                    <div class="season-info">
+                        <h2>Autumn Season</h2>
+                        <p class="period">September - November</p>
+                    </div>
+                </div>
+                <div class="season-description">
+                    Autumn is ideal for cool-season crops and harvesting. The cooler temperatures and shorter days are perfect for root vegetables and leafy greens.
+                </div>
+                <div class="crops-section">
+                    <h3>Recommended Crops</h3>
+                    <div class="crops-grid">
+                        <div class="crop-item">Potatoes</div>
+                        <div class="crop-item">Onions</div>
+                        <div class="crop-item">Garlic</div>
+                        <div class="crop-item">Kale</div>
+                        <div class="crop-item">Beets</div>
+                        <div class="crop-item">Turnips</div>
+                        <div class="crop-item">Cauliflower</div>
+                        <div class="crop-item">Brussels Sprouts</div>
+                    </div>
+                </div>
+                <div class="weather-conditions">
+                    <h4>Ideal Conditions</h4>
+                    <p>Cool temperatures (10-20°C), moderate rainfall, and decreasing daylight hours create perfect conditions for cool-season crops.</p>
+                </div>
+            </div>
+
+            <!-- Winter Season -->
+            <div class="season-card">
+                <div class="season-header">
+                    <div class="season-info">
+                        <h2>Winter Season</h2>
+                        <p class="period">December - February</p>
+                    </div>
+                </div>
+                <div class="season-description">
+                    Winter requires careful planning and protection for crops. Focus on hardy vegetables and consider greenhouse or indoor growing.
+                </div>
+                <div class="crops-section">
+                    <h3>Recommended Crops</h3>
+                    <div class="crops-grid">
+                        <div class="crop-item">Winter Wheat</div>
+                        <div class="crop-item">Barley</div>
+                        <div class="crop-item">Oats</div>
+                        <div class="crop-item">Rye</div>
+                        <div class="crop-item">Winter Peas</div>
+                        <div class="crop-item">Cover Crops</div>
+                        <div class="crop-item">Greenhouse Veggies</div>
+                        <div class="crop-item">Herbs</div>
+                    </div>
+                </div>
+                <div class="weather-conditions">
+                    <h4>Ideal Conditions</h4>
+                    <p>Cold temperatures (0-15°C), minimal daylight, and frost protection are essential for winter crop success.</p>
+                </div>
+            </div>
+
+            <!-- Monsoon Season -->
+            <div class="season-card">
+                <div class="season-header">
+                    <div class="season-info">
+                        <h2>Monsoon Season</h2>
+                        <p class="period">June - September</p>
+                    </div>
+                </div>
+                <div class="season-description">
+                    Monsoon season brings heavy rainfall and high humidity. Perfect for water-intensive crops and rice cultivation in tropical regions.
+                </div>
+                <div class="crops-section">
+                    <h3>Recommended Crops</h3>
+                    <div class="crops-grid">
+                        <div class="crop-item">Rice</div>
+                        <div class="crop-item">Maize</div>
+                        <div class="crop-item">Sugarcane</div>
+                        <div class="crop-item">Cotton</div>
+                        <div class="crop-item">Soybean</div>
+                        <div class="crop-item">Groundnut</div>
+                        <div class="crop-item">Turmeric</div>
+                        <div class="crop-item">Ginger</div>
+                    </div>
+                </div>
+                <div class="weather-conditions">
+                    <h4>Ideal Conditions</h4>
+                    <p>Heavy rainfall, high humidity (70-90%), warm temperatures (25-30°C), and adequate drainage are crucial.</p>
+                </div>
+            </div>
+
+            <!-- Planting Calendar -->
+            <div class="season-card">
+                <div class="season-header">
+                    <div class="season-info">
+                        <h2>Planting Calendar</h2>
+                        <p class="period">Year-Round Guide</p>
+                    </div>
+                </div>
+                <div class="season-description">
+                    A comprehensive planting calendar helps you plan your crops throughout the year for maximum yield and optimal growing conditions.
+                </div>
+                <div class="crops-section">
+                    <h3>Planning Tips</h3>
+                    <div class="crops-grid">
+                        <div class="crop-item">Crop Rotation</div>
+                        <div class="crop-item">Succession Planting</div>
+                        <div class="crop-item">Companion Planting</div>
+                        <div class="crop-item">Seed Starting</div>
+                        <div class="crop-item">Transplanting</div>
+                        <div class="crop-item">Harvest Timing</div>
+                        <div class="crop-item">Cover Crops</div>
+                        <div class="crop-item">Soil Preparation</div>
+                    </div>
+                </div>
+                <div class="weather-conditions">
+                    <h4>🌤️ Key Factors</h4>
+                    <p>Consider frost dates, growing degree days, soil temperature, and local climate patterns for optimal planting timing.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Back to dashboard function with token
+        function goBackToDashboard() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            if (token) {
+                window.location.href = 'dashboard.html?token=' + token;
+            } else {
+                // If no token, check localStorage for user data
+                const user = localStorage.getItem('user');
+                if (user) {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    window.location.href = 'login.html';
+                }
+            }
+        }
+
+        // Add smooth scrolling and interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.season-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Add click animation to crop items
+            const cropItems = document.querySelectorAll('.crop-item');
+            cropItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

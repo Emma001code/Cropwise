@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cropwise - Login</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Left Side - Background and Writeup -->
+        <div class="left-side">
+            <div class="background-overlay"></div>
+            <div class="content">
+                <div class="logo">
+                    <h1>Cropwise</h1>
+                    <p class="tagline">Your Agricultural Companion</p>
+                </div>
+                <div class="welcome-text">
+                    <h2>Welcome Back, Farmer!</h2>
+                    <p>Continue your farming journey with:</p>
+                    <ul>
+                        <li>🌱 Personalized crop recommendations</li>
+                        <li>🌤️ Weather-based farming alerts</li>
+                        <li>🛒 Easy access to quality supplies</li>
+                        <li>👨‍🌾 Expert agricultural advice</li>
+                        <li>📊 Your farming dashboard</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Login Form -->
+        <div class="right-side">
+            <div class="form-container">
+                <h2>Welcome Back</h2>
+                <p class="form-subtitle">Sign in to your account</p>
+                
+                <form id="loginForm" action="/login" method="POST">
+                    <div class="form-group">
+                        <label for="username">Username or Email</label>
+                        <input type="text" id="username" name="username" required placeholder="Enter your username or email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="password-input-container">
+                            <input type="password" id="password" name="password" required placeholder="Enter your password">
+                            <span class="password-toggle" onclick="togglePassword('password')">👁️</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" name="remember">
+                            <span>Remember me</span>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">Login</button>
+                </form>
+                
+                <div class="auth-switch">
+                    <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

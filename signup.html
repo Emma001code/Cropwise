@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cropwise - Sign Up</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Left Side - Background and Writeup -->
+        <div class="left-side">
+            <div class="background-overlay"></div>
+            <div class="content">
+                <div class="logo">
+                    <h1>Cropwise</h1>
+                    <p class="tagline">Your Agricultural Companion</p>
+                </div>
+                <div class="welcome-text">
+                    <h2>Welcome to the Future of Farming</h2>
+                    <p>Join thousands of farmers who are already using Cropwise to:</p>
+                    <ul>
+                        <li>🌱 Get expert crop guidance</li>
+                        <li>🌤️ Access real-time weather updates</li>
+                        <li>🛒 Purchase quality seeds and supplies</li>
+                        <li>👨‍🌾 Connect with agricultural experts</li>
+                        <li>📊 Track your farming progress</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Signup Form -->
+        <div class="right-side">
+            <div class="form-container">
+                <h2>Create Your Account</h2>
+                <p class="form-subtitle">Join the farming community today</p>
+                
+                <form id="signupForm" action="/signup" method="POST">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required placeholder="Enter your username">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required placeholder="Enter your email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="password-input-container">
+                            <input type="password" id="password" name="password" required placeholder="Create a password">
+                            <span class="password-toggle" onclick="togglePassword('password')">👁️</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <div class="password-input-container">
+                            <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm your password">
+                            <span class="password-toggle" onclick="togglePassword('confirmPassword')">👁️</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" name="gender" required>
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="occupation">Occupation</label>
+                        <input type="text" id="occupation" name="occupation" required placeholder="e.g., Farmer, Agricultural Engineer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" required placeholder="e.g., Lagos, Nigeria">
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">Sign Up</button>
+                </form>
+                
+                <div class="auth-switch">
+                    <p>Already have an account? <a href="login.html">Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
