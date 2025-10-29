@@ -4,6 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const admin = require('firebase-admin');
+const axios = require('axios');
 require('dotenv').config();
 
 // Initialize Firebase Admin (temporarily disabled for testing)
@@ -756,6 +757,130 @@ app.delete('/api/agriculturists/:id', (req, res) => {
     } catch (error) {
         console.error('Error deleting agriculturist:', error);
         res.status(500).json({ error: 'Unable to delete agriculturist' });
+    }
+});
+
+// AI Chat endpoint (secure - API key stays on server)
+app.post('/api/ai-chat', async (req, res) => {
+    try {
+        const { message } = req.body;
+        
+        if (!message || !message.trim()) {
+            return res.status(400).json({ error: 'Message is required' });
+        }
+
+        // API key stored securely on server (not exposed to frontend)
+        const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || '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';
+        
+        // Try multiple AI models
+        const models = [
+            "deepseek/deepseek-r1:free",
+            "meta-llama/llama-3.2-3b-instruct:free",
+            "microsoft/phi-3-mini-128k-instruct:free",
+            "google/gemma-2-9b-it:free"
+        ];
+
+        let aiMessage = null;
+        let lastError = null;
+
+        for (const model of models) {
+            try {
+                const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
+                    model: model,
+                    messages: [
+                        {
+                            role: "system",
+                            content: `You are an expert agricultural advisor for Cropwise, a farming management platform. 
+                            You help farmers with:
+                            - Crop selection and planning
+                            - Pest and disease identification
+                            - Soil management advice
+                            - Weather impact on farming
+                            - Harvest timing
+                            - Irrigation and water management
+                            - Organic farming practices
+                            - Market trends and pricing
+
+                            Always provide practical, actionable advice based on scientific farming principles.
+                            Be friendly, helpful, and encourage sustainable farming practices.`
+                        },
+                        {
+                            role: "user",
+                            content: message.trim()
+                        }
+                    ],
+                    max_tokens: 1000,
+                    temperature: 0.7
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                        'Content-Type': 'application/json',
+                        'HTTP-Referer': 'https://cropwise.com',
+                        'X-Title': 'Cropwise AI Assistant'
+                    },
+                    timeout: 30000
+                });
+
+                if (response.status === 200 && response.data.choices && response.data.choices[0]) {
+                    aiMessage = response.data.choices[0].message.content;
+                    console.log(`Successfully got response from model: ${model}`);
+                    break;
+                }
+            } catch (error) {
+                console.error(`Error with model ${model}:`, error.response?.status, error.response?.data?.error?.message || error.message);
+                lastError = error;
+                
+                if (error.response?.status === 429) {
+                    // Rate limited, try next model
+                    continue;
+                } else if (error.response?.status === 401 || error.response?.status === 403) {
+                    // Auth error - don't try other models
+                    return res.status(500).json({ 
+                        error: 'AI service authentication failed. Please contact support.' 
+                    });
+                } else {
+                    // Other error - try next model
+                    continue;
+                }
+            }
+        }
+
+        // If all models fail, provide helpful fallback
+        if (!aiMessage) {
+            console.error('All AI models failed. Last error:', lastError?.response?.data || lastError?.message);
+            aiMessage = `I'm sorry, I couldn't connect to the AI service right now. This might be due to:
+
+🔑 **Possible Issues:**
+- Service temporarily unavailable
+- Network connection issue
+
+**What you can do:**
+- Please try again in a few minutes
+- Check your internet connection
+- Visit our Expert Network for immediate help
+- Check the FAQs section
+
+In the meantime, here are general farming tips:
+
+🌱 **Immediate Actions:**
+- Check soil moisture levels regularly
+- Water according to your crop's needs
+- Monitor for pests and diseases
+- Apply appropriate fertilizers
+
+💧 **Watering Best Practices:**
+- Water deeply but less frequently
+- Water early morning or evening to reduce evaporation
+- Avoid watering leaves to prevent disease
+- Use mulch to retain soil moisture`;
+        }
+
+        res.json({ message: aiMessage });
+    } catch (error) {
+        console.error('Error in AI chat endpoint:', error);
+        res.status(500).json({ 
+            error: "I'm sorry, I'm having trouble connecting right now. Please try again in a moment or contact a local agricultural expert for immediate assistance."
+        });
     }
 });
 

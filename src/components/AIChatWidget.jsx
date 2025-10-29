@@ -38,97 +38,14 @@ const AIChatWidget = () => {
     setIsLoading(true);
 
     try {
-      // Try multiple AI models
-      const models = [
-        "deepseek/deepseek-r1:free",
-        "meta-llama/llama-3.2-3b-instruct:free",
-        "microsoft/phi-3-mini-128k-instruct:free",
-        "google/gemma-2-9b-it:free"
-      ];
-
-      let response = null;
-      let aiMessage = null;
-
-      for (const model of models) {
-        try {
-          const result = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
-            model: model,
-            messages: [
-              {
-                role: "system",
-                content: `You are an expert agricultural advisor for Cropwise, a farming management platform. 
-                You help farmers with:
-                - Crop selection and planning
-                - Pest and disease identification
-                - Soil management advice
-                - Weather impact on farming
-                - Harvest timing
-                - Irrigation and water management
-                - Organic farming practices
-                - Market trends and pricing
-
-                Always provide practical, actionable advice based on scientific farming principles.
-                Be friendly, helpful, and encourage sustainable farming practices.`
-              },
-              {
-                role: "user",
-                content: inputMessage
-              }
-            ],
-            max_tokens: 1000,
-            temperature: 0.7
-          }, {
-            headers: {
-              'Authorization': 'Bearer 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',
-              'Content-Type': 'application/json',
-              'HTTP-Referer': 'https://cropwise.com',
-              'X-Title': 'Cropwise AI Assistant'
-            },
-            timeout: 30000
-          });
-
-          if (result.status === 200) {
-            aiMessage = result.data.choices[0].message.content;
-            break;
-          }
-        } catch (error) {
-          if (error.response?.status === 429) {
-            // Try next model
-            continue;
-          } else {
-            throw error;
-          }
-        }
-      }
-
-      // If all models fail, provide fallback response
-      if (!aiMessage) {
-        aiMessage = `I'm currently experiencing high demand and all AI models are temporarily unavailable. 
-
-Here are some general tips for your question:
-
-🌱 **Immediate Actions:**
-- Check soil moisture levels
-- Increase watering frequency
-- Apply mulch to retain moisture
-- Check for root damage or pests
-
-💧 **Watering Tips:**
-- Water deeply but less frequently
-- Water early morning or evening
-- Avoid watering leaves to prevent disease
-
-🔍 **Diagnosis:**
-- Check for signs of pests or disease
-- Test soil pH and nutrient levels
-- Monitor weather conditions
-
-Please try again in a few minutes, or contact a local agricultural expert for immediate assistance.`;
-      }
+      // Call backend API (secure - API key is on server, not exposed)
+      const response = await axios.post('/api/ai-chat', {
+        message: inputMessage
+      });
 
       const aiResponse = {
         id: Date.now() + 1,
-        text: aiMessage,
+        text: response.data.message,
         isUser: false,
         timestamp: new Date()
       };

@@ -5,9 +5,10 @@ Test script to check OpenRouter API key functionality
 
 import requests
 import json
+import os
 
-# Your API key
-API_KEY = "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"
+# API Key - Get from environment variable or use default (should use .env in production)
+API_KEY = os.getenv('OPENROUTER_API_KEY', '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')
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 def test_api():
