@@ -7,12 +7,40 @@ const admin = require('firebase-admin');
 const axios = require('axios');
 require('dotenv').config();
 
-// Initialize Firebase Admin (temporarily disabled for testing)
-// const serviceAccount = require('./serviceAccountKey.json');
-// admin.initializeApp({
-//     credential: admin.credential.cert(serviceAccount)
-// });
-// const db = admin.firestore();
+// Initialize Firebase Admin
+let db = null;
+try {
+    let serviceAccount;
+    
+    // Try environment variables first (for Vercel deployment)
+    if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY) {
+        console.log('🔧 Initializing Firebase from environment variables...');
+        serviceAccount = {
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+            privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n') // Handle escaped newlines
+        };
+    } 
+    // Fall back to service account file (for local development)
+    else if (require('fs').existsSync('./serviceAccountKey.json')) {
+        console.log('🔧 Initializing Firebase from serviceAccountKey.json...');
+        serviceAccount = require('./serviceAccountKey.json');
+    }
+    
+    if (serviceAccount) {
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+        });
+        db = admin.firestore();
+        console.log('✅ Firebase Admin initialized successfully');
+    } else {
+        throw new Error('No Firebase credentials found');
+    }
+} catch (error) {
+    console.error('❌ Firebase initialization failed:', error.message);
+    console.log('⚠️  Falling back to JSON file storage');
+    console.log('💡 To use Firebase on Vercel, set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY as environment variables');
+}
 
 // Simple file-based database for persistence
 const fs = require('fs');
@@ -22,97 +50,293 @@ const PRODUCTS_FILE = path.join(__dirname, 'products.json');
 const ORDERS_FILE = path.join(__dirname, 'orders.json');
 const AGRICULTURISTS_FILE = path.join(__dirname, 'agriculturists.json');
 
-// Load users from file
+// Data storage - use Firestore if available, otherwise fallback to JSON files
 let mockUsers = new Map();
-try {
-    if (fs.existsSync(USERS_FILE)) {
-        const data = fs.readFileSync(USERS_FILE, 'utf8');
-        const usersArray = JSON.parse(data);
-        mockUsers = new Map(usersArray);
-        console.log('Loaded', mockUsers.size, 'users from file');
-    }
-} catch (error) {
-    console.log('No existing users file, starting fresh');
-}
-
-// Load products from file
 let products = [];
-try {
-    if (fs.existsSync(PRODUCTS_FILE)) {
-        const data = fs.readFileSync(PRODUCTS_FILE, 'utf8');
-        const productsData = JSON.parse(data);
-        products = productsData.products || [];
-        console.log('Loaded', products.length, 'products from file');
-    }
-} catch (error) {
-    console.log('No existing products file, starting fresh');
-}
-
-// Load orders from file
 let orders = [];
-try {
-    if (fs.existsSync(ORDERS_FILE)) {
-        const data = fs.readFileSync(ORDERS_FILE, 'utf8');
-        const ordersData = JSON.parse(data);
-        orders = ordersData.orders || [];
-        console.log('Loaded', orders.length, 'orders from file');
-    }
-} catch (error) {
-    console.log('No existing orders file, starting fresh');
-}
-
-// Load agriculturists from file
 let agriculturists = [];
-try {
-    if (fs.existsSync(AGRICULTURISTS_FILE)) {
-        const data = fs.readFileSync(AGRICULTURISTS_FILE, 'utf8');
-        const agriculturistsData = JSON.parse(data);
-        agriculturists = agriculturistsData.agriculturists || [];
-        console.log('Loaded', agriculturists.length, 'agriculturists from file');
+
+// Load data from Firestore or JSON files
+async function loadDataFromStorage() {
+    if (db) {
+        // Load from Firestore
+        try {
+            // Load users
+            const usersSnapshot = await db.collection('users').get();
+            mockUsers = new Map();
+            usersSnapshot.forEach(doc => {
+                const userData = doc.data();
+                mockUsers.set(userData.uid, userData);
+            });
+            console.log('✅ Loaded', mockUsers.size, 'users from Firestore');
+            
+            // Load products
+            const productsSnapshot = await db.collection('products').get();
+            products = [];
+            productsSnapshot.forEach(doc => {
+                products.push({ id: doc.id, ...doc.data() });
+            });
+            console.log('✅ Loaded', products.length, 'products from Firestore');
+            
+            // Load orders
+            const ordersSnapshot = await db.collection('orders').get();
+            orders = [];
+            ordersSnapshot.forEach(doc => {
+                orders.push({ id: doc.id, ...doc.data() });
+            });
+            console.log('✅ Loaded', orders.length, 'orders from Firestore');
+            
+            // Load agriculturists
+            const agriculturistsSnapshot = await db.collection('agriculturists').get();
+            agriculturists = [];
+            agriculturistsSnapshot.forEach(doc => {
+                agriculturists.push({ id: doc.id, ...doc.data() });
+            });
+            console.log('✅ Loaded', agriculturists.length, 'agriculturists from Firestore');
+            
+            // Migrate existing JSON data to Firestore if Firestore is empty but JSON files exist
+            if (mockUsers.size === 0 && fs.existsSync(USERS_FILE)) {
+                console.log('🔄 Migrating users from JSON to Firestore...');
+                const data = fs.readFileSync(USERS_FILE, 'utf8');
+                const usersArray = JSON.parse(data);
+                for (const [uid, userData] of usersArray) {
+                    await db.collection('users').doc(uid).set(userData);
+                    mockUsers.set(uid, userData);
+                }
+                console.log('✅ Migrated', mockUsers.size, 'users to Firestore');
+            }
+            
+            if (products.length === 0 && fs.existsSync(PRODUCTS_FILE)) {
+                console.log('🔄 Migrating products from JSON to Firestore...');
+                const data = fs.readFileSync(PRODUCTS_FILE, 'utf8');
+                const productsData = JSON.parse(data);
+                const batch = db.batch();
+                for (const product of productsData.products || []) {
+                    const productRef = db.collection('products').doc(product.id || Date.now().toString());
+                    batch.set(productRef, product);
+                    products.push({ id: productRef.id, ...product });
+                }
+                await batch.commit();
+                console.log('✅ Migrated', products.length, 'products to Firestore');
+            }
+            
+            if (orders.length === 0 && fs.existsSync(ORDERS_FILE)) {
+                console.log('🔄 Migrating orders from JSON to Firestore...');
+                const data = fs.readFileSync(ORDERS_FILE, 'utf8');
+                const ordersData = JSON.parse(data);
+                const batch = db.batch();
+                for (const order of ordersData.orders || []) {
+                    const orderRef = db.collection('orders').doc(order.id || Date.now().toString());
+                    batch.set(orderRef, order);
+                    orders.push({ id: orderRef.id, ...order });
+                }
+                await batch.commit();
+                console.log('✅ Migrated', orders.length, 'orders to Firestore');
+            }
+            
+            if (agriculturists.length === 0 && fs.existsSync(AGRICULTURISTS_FILE)) {
+                console.log('🔄 Migrating agriculturists from JSON to Firestore...');
+                const data = fs.readFileSync(AGRICULTURISTS_FILE, 'utf8');
+                const agriculturistsData = JSON.parse(data);
+                const batch = db.batch();
+                for (const agriculturist of agriculturistsData.agriculturists || []) {
+                    const agriculturistRef = db.collection('agriculturists').doc(agriculturist.id || Date.now().toString());
+                    batch.set(agriculturistRef, agriculturist);
+                    agriculturists.push({ id: agriculturistRef.id, ...agriculturist });
+                }
+                await batch.commit();
+                console.log('✅ Migrated', agriculturists.length, 'agriculturists to Firestore');
+            }
+            
+        } catch (error) {
+            console.error('❌ Error loading from Firestore:', error);
+            console.log('⚠️  Falling back to JSON file storage');
+            loadDataFromJSONFiles();
+        }
+    } else {
+        // Fallback to JSON files
+        loadDataFromJSONFiles();
     }
-} catch (error) {
-    console.log('No existing agriculturists file, starting fresh');
 }
 
-// Save users to file
-function saveUsers() {
+// Load data from JSON files (fallback)
+function loadDataFromJSONFiles() {
+    try {
+        // Load users
+        if (fs.existsSync(USERS_FILE)) {
+            const data = fs.readFileSync(USERS_FILE, 'utf8');
+            const usersArray = JSON.parse(data);
+            mockUsers = new Map(usersArray);
+            console.log('📄 Loaded', mockUsers.size, 'users from JSON file');
+        }
+    } catch (error) {
+        console.log('No existing users file, starting fresh');
+    }
+    
+    try {
+        // Load products
+        if (fs.existsSync(PRODUCTS_FILE)) {
+            const data = fs.readFileSync(PRODUCTS_FILE, 'utf8');
+            const productsData = JSON.parse(data);
+            products = productsData.products || [];
+            console.log('📄 Loaded', products.length, 'products from JSON file');
+        }
+    } catch (error) {
+        console.log('No existing products file, starting fresh');
+    }
+    
+    try {
+        // Load orders
+        if (fs.existsSync(ORDERS_FILE)) {
+            const data = fs.readFileSync(ORDERS_FILE, 'utf8');
+            const ordersData = JSON.parse(data);
+            orders = ordersData.orders || [];
+            console.log('📄 Loaded', orders.length, 'orders from JSON file');
+        }
+    } catch (error) {
+        console.log('No existing orders file, starting fresh');
+    }
+    
+    try {
+        // Load agriculturists
+        if (fs.existsSync(AGRICULTURISTS_FILE)) {
+            const data = fs.readFileSync(AGRICULTURISTS_FILE, 'utf8');
+            const agriculturistsData = JSON.parse(data);
+            agriculturists = agriculturistsData.agriculturists || [];
+            console.log('📄 Loaded', agriculturists.length, 'agriculturists from JSON file');
+        }
+    } catch (error) {
+        console.log('No existing agriculturists file, starting fresh');
+    }
+}
+
+// Save users to Firestore or JSON file
+async function saveUsers() {
+    if (db) {
+        try {
+            // Save to Firestore
+            const batch = db.batch();
+            for (const [uid, userData] of mockUsers.entries()) {
+                const userRef = db.collection('users').doc(uid);
+                batch.set(userRef, userData);
+            }
+            await batch.commit();
+            console.log('✅ Saved', mockUsers.size, 'users to Firestore');
+        } catch (error) {
+            console.error('Error saving users to Firestore:', error);
+            // Fallback to JSON
+            saveUsersToFile();
+        }
+    } else {
+        // Fallback to JSON file
+        saveUsersToFile();
+    }
+}
+
+function saveUsersToFile() {
     try {
         const usersArray = Array.from(mockUsers.entries());
         fs.writeFileSync(USERS_FILE, JSON.stringify(usersArray, null, 2));
-        console.log('Saved', mockUsers.size, 'users to file');
+        console.log('📄 Saved', mockUsers.size, 'users to file');
     } catch (error) {
         console.error('Error saving users:', error);
     }
 }
 
-// Save products to file
-function saveProducts() {
+// Save products to Firestore or JSON file
+async function saveProducts() {
+    if (db) {
+        try {
+            // Save to Firestore
+            const batch = db.batch();
+            for (const product of products) {
+                const productRef = db.collection('products').doc(product.id);
+                batch.set(productRef, product);
+            }
+            await batch.commit();
+            console.log('✅ Saved', products.length, 'products to Firestore');
+        } catch (error) {
+            console.error('Error saving products to Firestore:', error);
+            // Fallback to JSON
+            saveProductsToFile();
+        }
+    } else {
+        // Fallback to JSON file
+        saveProductsToFile();
+    }
+}
+
+function saveProductsToFile() {
     try {
         const productsData = { products: products };
         fs.writeFileSync(PRODUCTS_FILE, JSON.stringify(productsData, null, 2));
-        console.log('Saved', products.length, 'products to file');
+        console.log('📄 Saved', products.length, 'products to file');
     } catch (error) {
         console.error('Error saving products:', error);
     }
 }
 
-// Save orders to file
-function saveOrders() {
+// Save orders to Firestore or JSON file
+async function saveOrders() {
+    if (db) {
+        try {
+            // Save to Firestore
+            const batch = db.batch();
+            for (const order of orders) {
+                const orderRef = db.collection('orders').doc(order.id);
+                batch.set(orderRef, order);
+            }
+            await batch.commit();
+            console.log('✅ Saved', orders.length, 'orders to Firestore');
+        } catch (error) {
+            console.error('Error saving orders to Firestore:', error);
+            // Fallback to JSON
+            saveOrdersToFile();
+        }
+    } else {
+        // Fallback to JSON file
+        saveOrdersToFile();
+    }
+}
+
+function saveOrdersToFile() {
     try {
         const ordersData = { orders: orders };
         fs.writeFileSync(ORDERS_FILE, JSON.stringify(ordersData, null, 2));
-        console.log('Saved', orders.length, 'orders to file');
+        console.log('📄 Saved', orders.length, 'orders to file');
     } catch (error) {
         console.error('Error saving orders:', error);
     }
 }
 
-// Save agriculturists to file
-function saveAgriculturists() {
+// Save agriculturists to Firestore or JSON file
+async function saveAgriculturists() {
+    if (db) {
+        try {
+            // Save to Firestore
+            const batch = db.batch();
+            for (const agriculturist of agriculturists) {
+                const agriculturistRef = db.collection('agriculturists').doc(agriculturist.id);
+                batch.set(agriculturistRef, agriculturist);
+            }
+            await batch.commit();
+            console.log('✅ Saved', agriculturists.length, 'agriculturists to Firestore');
+        } catch (error) {
+            console.error('Error saving agriculturists to Firestore:', error);
+            // Fallback to JSON
+            saveAgriculturistsToFile();
+        }
+    } else {
+        // Fallback to JSON file
+        saveAgriculturistsToFile();
+    }
+}
+
+function saveAgriculturistsToFile() {
     try {
         const agriculturistsData = { agriculturists: agriculturists };
         fs.writeFileSync(AGRICULTURISTS_FILE, JSON.stringify(agriculturistsData, null, 2));
-        console.log('Saved', agriculturists.length, 'agriculturists to file');
+        console.log('📄 Saved', agriculturists.length, 'agriculturists to file');
     } catch (error) {
         console.error('Error saving agriculturists:', error);
     }
@@ -124,7 +348,7 @@ const mockDb = {
             set: async (data) => {
                 console.log('Mock: Creating user', data);
                 mockUsers.set(data.uid, data);
-                saveUsers(); // Save to file
+                await saveUsers(); // Save to Firestore/file
                 return { success: true };
             },
             get: async () => ({ 
@@ -136,7 +360,7 @@ const mockDb = {
                 if (user) {
                     Object.assign(user, data);
                     mockUsers.set(id, user);
-                    saveUsers(); // Save to file
+                    await saveUsers(); // Save to Firestore/file
                 }
                 return { success: true };
             }
@@ -170,7 +394,8 @@ const mockDb = {
     })
 };
 
-const db = mockDb;
+// db is already defined at the top (Firestore or null)
+// mockDb is only used if db (Firestore) is not available
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -263,9 +488,9 @@ app.post('/api/signup', async (req, res) => {
             lastLogin: null
         };
         
-        // Save to mockUsers and persist to file
+        // Save to mockUsers and persist to Firestore/file
         mockUsers.set(userRecord.uid, userRecord);
-        saveUsers();
+        await saveUsers();
         
         console.log('New user created:', userRecord.uid);
         console.log('User data saved:', { email, username, password: password.substring(0, 3) + '***' });
@@ -333,7 +558,7 @@ app.post('/api/login', async (req, res) => {
         // Update last login
         userData.lastLogin = new Date().toISOString();
         mockUsers.set(userData.uid, userData);
-        saveUsers();
+        await saveUsers();
         
         // Generate token
         const customToken = 'token-' + Date.now() + '-' + userData.uid;
@@ -462,7 +687,7 @@ app.get('/api/products', (req, res) => {
 });
 
 // Add new product (Admin only)
-app.post('/api/products', upload.single('image'), (req, res) => {
+app.post('/api/products', upload.single('image'), async (req, res) => {
     try {
         const { name, category, price, unit, description, stock, seller, location } = req.body;
         
@@ -490,7 +715,7 @@ app.post('/api/products', upload.single('image'), (req, res) => {
         };
         
         products.push(newProduct);
-        saveProducts();
+        await saveProducts();
         
         console.log('New product added:', newProduct);
         res.json({ message: 'Product added successfully', product: newProduct });
@@ -501,7 +726,7 @@ app.post('/api/products', upload.single('image'), (req, res) => {
 });
 
 // Update product (Admin only)
-app.put('/api/products/:id', upload.single('image'), (req, res) => {
+app.put('/api/products/:id', upload.single('image'), async (req, res) => {
     try {
         const { id } = req.params;
         const { name, category, price, unit, description, stock, seller, location } = req.body;
@@ -530,7 +755,7 @@ app.put('/api/products/:id', upload.single('image'), (req, res) => {
             location: location || products[productIndex].location
         };
         
-        saveProducts();
+        await saveProducts();
         res.json({ message: 'Product updated successfully', product: products[productIndex] });
     } catch (error) {
         console.error('Error updating product:', error);
@@ -539,7 +764,7 @@ app.put('/api/products/:id', upload.single('image'), (req, res) => {
 });
 
 // Delete product (Admin only)
-app.delete('/api/products/:id', (req, res) => {
+app.delete('/api/products/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const productIndex = products.findIndex(p => p.id === id);
@@ -549,7 +774,7 @@ app.delete('/api/products/:id', (req, res) => {
         }
         
         products.splice(productIndex, 1);
-        saveProducts();
+        await saveProducts();
         res.json({ message: 'Product deleted successfully' });
     } catch (error) {
         console.error('Error deleting product:', error);
@@ -560,7 +785,7 @@ app.delete('/api/products/:id', (req, res) => {
 // Order Management Routes
 
 // Submit order
-app.post('/api/orders', (req, res) => {
+app.post('/api/orders', async (req, res) => {
     try {
         const { customer, items, total } = req.body;
         
@@ -576,7 +801,7 @@ app.post('/api/orders', (req, res) => {
         };
         
         orders.push(newOrder);
-        saveOrders();
+        await saveOrders();
         
         console.log('New order received:', newOrder);
         res.json({ message: 'Order submitted successfully', orderId: orderId });
@@ -597,7 +822,7 @@ app.get('/api/orders', (req, res) => {
 });
 
 // Delete order (Admin only)
-app.delete('/api/orders/:id', (req, res) => {
+app.delete('/api/orders/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const orderIndex = orders.findIndex(order => order.id === id);
@@ -607,7 +832,7 @@ app.delete('/api/orders/:id', (req, res) => {
         }
         
         orders.splice(orderIndex, 1);
-        saveOrders();
+        await saveOrders();
         
         console.log('Order deleted:', id);
         res.json({ message: 'Order deleted successfully' });
@@ -630,7 +855,7 @@ app.get('/api/agriculturists', (req, res) => {
 });
 
 // Add new agriculturist
-app.post('/api/agriculturists', upload.single('profileImage'), (req, res) => {
+app.post('/api/agriculturists', upload.single('profileImage'), async (req, res) => {
     try {
         const { fullName, location, specialization, experience, email, enrolledBy } = req.body;
         
@@ -674,7 +899,7 @@ app.post('/api/agriculturists', upload.single('profileImage'), (req, res) => {
         };
 
         agriculturists.push(newAgriculturist);
-        saveAgriculturists();
+        await saveAgriculturists();
         
         console.log('New agriculturist enrolled:', newAgriculturist);
         res.json({ message: 'Agriculturist enrolled successfully', agriculturist: newAgriculturist });
@@ -685,7 +910,7 @@ app.post('/api/agriculturists', upload.single('profileImage'), (req, res) => {
 });
 
 // Update agriculturist profile
-app.put('/api/agriculturists/:id', upload.single('profileImage'), (req, res) => {
+app.put('/api/agriculturists/:id', upload.single('profileImage'), async (req, res) => {
     try {
         const { id } = req.params;
         const { fullName, location, specialization, experience, email } = req.body;
@@ -729,7 +954,7 @@ app.put('/api/agriculturists/:id', upload.single('profileImage'), (req, res) => 
             updatedAt: new Date().toISOString()
         };
 
-        saveAgriculturists();
+        await saveAgriculturists();
         
         console.log('Agriculturist profile updated:', agriculturists[agriculturistIndex]);
         res.json({ message: 'Profile updated successfully', agriculturist: agriculturists[agriculturistIndex] });
@@ -740,7 +965,7 @@ app.put('/api/agriculturists/:id', upload.single('profileImage'), (req, res) => 
 });
 
 // Delete agriculturist (Admin only)
-app.delete('/api/agriculturists/:id', (req, res) => {
+app.delete('/api/agriculturists/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const agriculturistIndex = agriculturists.findIndex(a => a.id === id);
@@ -750,7 +975,7 @@ app.delete('/api/agriculturists/:id', (req, res) => {
         }
 
         const deletedAgriculturist = agriculturists.splice(agriculturistIndex, 1)[0];
-        saveAgriculturists();
+        await saveAgriculturists();
         
         console.log('Agriculturist deleted:', deletedAgriculturist);
         res.json({ message: 'Agriculturist deleted successfully' });
@@ -922,17 +1147,37 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Something went wrong!' });
 });
 
-// 404 handler
+// 404 handler - only for API routes, let static files be handled by express.static
 app.use((req, res) => {
+    // Skip 404 handling for static files (CSS, JS, images, fonts, etc.)
+    const staticFileExtensions = ['.css', '.js', '.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp', '.ico', '.woff', '.woff2', '.ttf', '.eot', '.avif'];
+    const isStaticFile = staticFileExtensions.some(ext => req.path.toLowerCase().endsWith(ext));
+    
+    if (isStaticFile) {
+        // For static files, return proper 404 (Express static middleware will handle if file exists)
+        res.status(404).send('File not found');
+        return;
+    }
+    
+    // For API routes, return JSON
+    if (req.path.startsWith('/api/')) {
+        res.status(404).json({ error: 'API endpoint not found' });
+        return;
+    }
+    
+    // For page routes, try to serve HTML or return JSON
     res.status(404).json({ error: 'Page not found' });
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`Cropwise server running on http://localhost:${PORT}`);
-    console.log(`Signup: http://localhost:${PORT}/signup`);
-    console.log(`Login: http://localhost:${PORT}/login`);
-    console.log(`Dashboard: http://localhost:${PORT}/dashboard`);
-});
+// Start server - wait for data to load first
+(async () => {
+    await loadDataFromStorage();
+    app.listen(PORT, () => {
+        console.log(`Cropwise server running on http://localhost:${PORT}`);
+        console.log(`Signup: http://localhost:${PORT}/signup`);
+        console.log(`Login: http://localhost:${PORT}/login`);
+        console.log(`Dashboard: http://localhost:${PORT}/dashboard`);
+    });
+})();
 
 module.exports = app;
