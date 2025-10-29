@@ -1,12 +1,12 @@
-# 🌾 Cropwise - Farmer-Friendly Agricultural Web Application
+# Cropwise - Farmer-Friendly Agricultural Web Application
 
 A comprehensive agricultural web application designed to empower farmers with modern tools for crop management, seasonal guidance, soil analysis, and AI-powered agricultural assistance and real time weather information.
 
-## 🚀 Live Demo
+## Live Demo
 
 **Access the application:** 
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Features](#-features)
 - [Installation](#-installation)
@@ -14,7 +14,6 @@ A comprehensive agricultural web application designed to empower farmers with mo
 - [Project Structure](#-project-structure)
 - [API Documentation](#-api-documentation)
 - [Technologies Used](#-technologies-used)
-- [Contributing](#-contributing)
 - [License](#-license)
 
 ## Features
@@ -43,7 +42,7 @@ A comprehensive agricultural web application designed to empower farmers with mo
 - **Order Management**: Users are able to Order Goods
 - **Secure Payments**: Payment on order arrival
 
-### 👥 Community Features
+### Community Features
 - **Agriculturist Network**: Connect with farming experts
 - **Profile Management**: Create and manage expert profiles
 - **Specialization Tags**: Find experts by their specialization
@@ -88,7 +87,7 @@ npm start
 ### Step 5: Access the Application
 Open your browser and navigate to [http://localhost:3000](http://localhost:3000)
 
-## 🚀 Usage
+## Usage
 
 ### Getting Started
 1. **Welcome Page**: Start at the landing page
@@ -219,15 +218,10 @@ PUT /api/agriculturists/:id
 - **Intuitive Navigation**: Easy-to-use interface
 
 ### Color Scheme
-- **Primary Green**: #2E7D32 (Agricultural theme)
-- **Success Green**: #4CAF50 (Notifications)
-- **Background**: #f8f9fa (Clean and modern)
-- **Text**: #2d3436 (High contrast readability)
-
-
-##  License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- **Primary Green**: (Agricultural theme)
+- **Success Green**: (Notifications)
+- **Background**: (Clean and modern)
+- **Text**: (High contrast readability)
 
 ## Author
 
@@ -265,6 +259,9 @@ If you encounter any issues or have questions:
 - **v2.0.0** (Planned): Mobile app release
 
 ---
+##  License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 <div align="center">
 
