@@ -241,16 +241,16 @@ app.post('/api/signup', async (req, res) => {
             return res.status(400).json({ error: 'Password must be at least 6 characters long' });
         }
         
-        // Mock user creation for testing
+        // Check if user already exists
+        for (const [uid, user] of mockUsers.entries()) {
+            if (user.email.toLowerCase() === email.toLowerCase() || user.username.toLowerCase() === username.toLowerCase()) {
+                return res.status(400).json({ error: 'Email or username already exists. Please use a different email or try logging in.' });
+            }
+        }
+        
+        // Create new user
         const userRecord = {
             uid: Date.now().toString(),
-            email: email,
-            displayName: username
-        };
-
-        // Save additional user data to Firestore
-        await db.collection('users').doc(userRecord.uid).set({
-            uid: userRecord.uid,
             username: username,
             email: email,
             password: password, // Store password for now (in production, hash it)
@@ -260,7 +260,11 @@ app.post('/api/signup', async (req, res) => {
             location: location || '',
             createdAt: new Date().toISOString(),
             lastLogin: null
-        });
+        };
+        
+        // Save to mockUsers and persist to file
+        mockUsers.set(userRecord.uid, userRecord);
+        saveUsers();
         
         console.log('New user created:', userRecord.uid);
         console.log('User data saved:', { email, username, password: password.substring(0, 3) + '***' });
@@ -296,42 +300,28 @@ app.post('/api/login', async (req, res) => {
             return res.status(400).json({ error: 'Username and password are required' });
         }
         
-        // Check if username is an email or username
-        let email = username;
-        if (!username.includes('@')) {
-            // If it's a username, find the email from Firestore
-            const usersSnapshot = await db.collection('users')
-                .where('username', '==', username)
-                .limit(1)
-                .get();
+        // Find user by email or username (case-insensitive)
+        let userData = null;
+        let userEmail = username;
+        
+        // Search through mockUsers to find matching user
+        for (const [uid, user] of mockUsers.entries()) {
+            const emailMatch = user.email && user.email.toLowerCase() === username.toLowerCase();
+            const usernameMatch = user.username && user.username.toLowerCase() === username.toLowerCase();
             
-            if (usersSnapshot.empty) {
-                return res.status(400).json({ error: 'No account found with this username. Please check your credentials or sign up.' });
+            if (emailMatch || usernameMatch) {
+                userData = user;
+                userEmail = user.email;
+                break;
             }
-            
-            const userDoc = usersSnapshot.docs[0];
-            email = userDoc.data().email;
         }
         
-        console.log('Looking for user with email:', email);
-        console.log('Current users in database:', Array.from(mockUsers.keys()));
-        console.log('All users data:', Array.from(mockUsers.values()).map(u => ({ email: u.email, username: u.username })));
-        
-        // Check if user exists in our database (case-insensitive)
-        const userSnapshot = await db.collection('users')
-            .where('email', '==', email.toLowerCase())
-            .limit(1)
-            .get();
-        
-        if (userSnapshot.empty) {
-            console.log('No user found with email:', email);
-            return res.status(400).json({ error: 'No account found with this email. Please check your credentials or sign up.' });
+        if (!userData) {
+            return res.status(400).json({ error: 'No account found with this email/username. Please check your credentials or sign up.' });
         }
-        
-        const userData = userSnapshot.docs[0].data();
         
         // Debug logging
-        console.log('Login attempt:', { email: email, providedPassword: password.substring(0, 3) + '***', storedPassword: userData.password.substring(0, 3) + '***' });
+        console.log('Login attempt:', { email: userEmail, providedPassword: password.substring(0, 3) + '***', storedPassword: userData.password.substring(0, 3) + '***' });
         
         // Check if the stored password matches
         if (userData.password !== password) {
@@ -339,27 +329,22 @@ app.post('/api/login', async (req, res) => {
             return res.status(400).json({ error: 'Incorrect password. Please try again.' });
         }
         
-        const userRecord = {
-            uid: userData.uid,
-            email: email
-        };
+        // Update last login
+        userData.lastLogin = new Date().toISOString();
+        mockUsers.set(userData.uid, userData);
+        saveUsers();
         
         // Generate token
-        const customToken = 'token-' + Date.now() + '-' + userRecord.uid;
+        const customToken = 'token-' + Date.now() + '-' + userData.uid;
         
-        // Update last login
-        await db.collection('users').doc(userRecord.uid).update({
-            lastLogin: new Date().toISOString()
-        });
-        
-        console.log('User login successful:', userRecord.uid);
+        console.log('User login successful:', userData.uid);
         
         res.json({
             message: 'Login successful',
             user: {
-                uid: userRecord.uid,
+                uid: userData.uid,
                 username: userData.username,
-                email: email,
+                email: userEmail,
                 gender: userData.gender || '',
                 occupation: userData.occupation || '',
                 location: userData.location || '',
@@ -417,16 +402,15 @@ app.get('/faqs', (req, res) => {
 app.get('/api/stats', async (req, res) => {
     try {
         // Get total user count
-        const usersSnapshot = await db.collection('users').get();
-        const totalUsers = usersSnapshot.size;
+        const totalUsers = mockUsers.size;
         
         // Get recent signups (last 7 days)
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
         
-        const recentUsers = usersSnapshot.docs.filter(doc => {
-            const userData = doc.data();
-            const createdAt = new Date(userData.createdAt);
+        const recentUsers = Array.from(mockUsers.values()).filter(user => {
+            if (!user.createdAt) return false;
+            const createdAt = new Date(user.createdAt);
             return createdAt >= sevenDaysAgo;
         }).length;
         
