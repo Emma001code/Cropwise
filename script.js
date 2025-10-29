@@ -51,7 +51,7 @@ async function handleSignup(e) {
         if (response.ok) {
             showMessage('Account created successfully! Redirecting to login...', 'success');
             setTimeout(() => {
-                window.location.href = 'login.html';
+                window.location.href = '/login';
             }, 2000);
         } else {
             showMessage(result.error || 'Signup failed. Please try again.', 'error');
@@ -101,7 +101,7 @@ async function handleLogin(e) {
             // Store user data in localStorage
             localStorage.setItem('user', JSON.stringify(result.user));
             setTimeout(() => {
-                window.location.href = 'dashboard.html?token=' + result.token;
+                window.location.href = '/dashboard?token=' + result.token;
             }, 1500);
         } else {
             showMessage(result.error || 'Login failed. Please check your credentials.', 'error');
