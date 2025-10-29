@@ -770,7 +770,14 @@ app.post('/api/ai-chat', async (req, res) => {
         }
 
         // API key stored securely on server (not exposed to frontend)
-        const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || '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';
+        const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+        
+        if (!OPENROUTER_API_KEY) {
+            console.error('ERROR: OPENROUTER_API_KEY environment variable is not set!');
+            return res.status(500).json({ 
+                error: 'AI service configuration error. Please contact support.'
+            });
+        }
         
         // Try multiple AI models
         const models = [

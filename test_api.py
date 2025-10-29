@@ -7,8 +7,12 @@ import requests
 import json
 import os
 
-# API Key - Get from environment variable or use default (should use .env in production)
-API_KEY = os.getenv('OPENROUTER_API_KEY', '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')
+# API Key - MUST be set via environment variable
+API_KEY = os.getenv('OPENROUTER_API_KEY')
+if not API_KEY:
+    print("ERROR: OPENROUTER_API_KEY environment variable is not set!")
+    print("Set it with: export OPENROUTER_API_KEY='your-key-here'")
+    exit(1)
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 def test_api():

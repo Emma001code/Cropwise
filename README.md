@@ -68,12 +68,21 @@ npm install
 ```
 
 ### Step 3: Environment Setup
-Create a `.env` file in the root directory:
+**IMPORTANT:** Create a `.env` file in the root directory (DO NOT commit this file to git):
+
 ```env
 PORT=3000
 NODE_ENV=development
 OPENROUTER_API_KEY=your_openrouter_api_key_here
 ```
+
+**Get your API key:**
+1. Go to [https://openrouter.ai/keys](https://openrouter.ai/keys)
+2. Sign up or log in
+3. Create a new API key
+4. Copy it and paste it in your `.env` file
+
+⚠️ **Security Note:** The `.env` file is already in `.gitignore` and will NOT be committed to GitHub. Never share or commit your API key!
 
 ### Step 4: Start the Application
 ```bash
@@ -102,7 +111,7 @@ Open your browser and navigate to [http://localhost:3000](http://localhost:3000)
 - **Supply Shopping**: Purchase farming equipment and supplies
 - **AI Assistance**: Get instant answers to farming questions
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 Cropwise/
@@ -210,7 +219,7 @@ PUT /api/agriculturists/:id
 - **Git**: Version control
 - **VS Code**: Recommended IDE
 
-## 🎨 Design Features
+## Design Features
 
 ### UI/UX
 - **Glassmorphism**: Modern glass-like effects
