@@ -4,7 +4,7 @@ A comprehensive agricultural web application designed to empower farmers with mo
 
 ## Live Demo
 
-**Access the application:** 
+**view the application:** [https://cropwise-hkm1.onrender.com](https://cropwise-hkm1.onrender.com)
 
 ## Table of Contents
 
@@ -249,9 +249,8 @@ PUT /api/agriculturists/:id
 
 If you encounter any issues or have questions:
 
-1. **Check the FAQ**: Visit [faqs.html](faqs.html) for common questions
-2. **Create an Issue**: Use GitHub Issues for bug reports
-3. **Contact Support**: Email e.ngwoke@alustudent.com
+1. **Create an Issue**: Use GitHub Issues for bug reports
+2. **Contact Support**: Email e.ngwoke@alustudent.com
 
 ## Roadmap
 
