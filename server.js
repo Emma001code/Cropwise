@@ -452,6 +452,7 @@ app.get('/api/weather/:location', async (req, res) => {
 // Get all products
 app.get('/api/products', (req, res) => {
     try {
+        console.log('Products API called - returning', products.length, 'products');
         res.json({ products: products });
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -762,9 +763,17 @@ app.delete('/api/agriculturists/:id', (req, res) => {
 app.get('/api/check-admin/:email', (req, res) => {
     try {
         const { email } = req.params;
+        console.log('Checking admin status for:', email);
         const user = Array.from(mockUsers.values()).find(u => u.email.toLowerCase() === email.toLowerCase());
         
+        if (user) {
+            console.log('User found:', user.email, 'Role:', user.role);
+        } else {
+            console.log('User not found for email:', email);
+        }
+        
         if (user && user.role === 'admin') {
+            console.log('User is admin!');
             res.json({ isAdmin: true, user: user });
         } else {
             res.json({ isAdmin: false });

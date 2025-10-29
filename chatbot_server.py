@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app)
 
 # OpenRouter API configuration
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "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"
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 # Agricultural context for the AI

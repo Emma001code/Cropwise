@@ -79,7 +79,7 @@ const AIChatWidget = () => {
             temperature: 0.7
           }, {
             headers: {
-              'Authorization': 'Bearer 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',
+              'Authorization': 'Bearer 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',
               'Content-Type': 'application/json',
               'HTTP-Referer': 'https://cropwise.com',
               'X-Title': 'Cropwise AI Assistant'
