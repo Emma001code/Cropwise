@@ -1,20 +1,14 @@
 # 🌾 Cropwise - Farmer-Friendly Agricultural Web Application
 
-[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/yourusername/cropwise)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Node.js](https://img.shields.io/badge/node.js-18+-green.svg)](https://nodejs.org/)
-[![Express](https://img.shields.io/badge/express-4.18+-blue.svg)](https://expressjs.com/)
-
-A comprehensive agricultural web application designed to empower farmers with modern tools for crop management, seasonal guidance, soil analysis, and AI-powered agricultural assistance.
+A comprehensive agricultural web application designed to empower farmers with modern tools for crop management, seasonal guidance, soil analysis, and AI-powered agricultural assistance and real time weather information.
 
 ## 🚀 Live Demo
 
-**Access the application:** [http://localhost:3000](http://localhost:3000)
+**Access the application:** 
 
 ## 📋 Table of Contents
 
 - [Features](#-features)
-- [Screenshots](#-screenshots)
 - [Installation](#-installation)
 - [Usage](#-usage)
 - [Project Structure](#-project-structure)
@@ -23,32 +17,31 @@ A comprehensive agricultural web application designed to empower farmers with mo
 - [Contributing](#-contributing)
 - [License](#-license)
 
-## ✨ Features
+## Features
 
-### 🔐 User Authentication
+### User Authentication
 - **Secure Registration**: Complete user signup with validation
 - **Login System**: Email/password authentication with session management
 - **Profile Management**: User profile display and editing
 - **Session Security**: Token-based authentication with localStorage
 
-### 🌱 Agricultural Tools
+### Agricultural Tools
 - **Seasonal Guidance**: Comprehensive crop information for all seasons
 - **Soil Analysis**: Detailed soil type information and cultivation tips
 - **Weather Updates**: Real-time weather information for farming decisions
 - **Expert Network**: Connect with agricultural specialists
 - **Purchase Supplies**: Integrated marketplace for farming equipment
+- **Weather Information**: Integrated marketplace for farming equipment
 
-### 🤖 AI-Powered Assistant
+### AI-Powered Assistant
 - **DeepSeek AI Integration**: Advanced agricultural chatbot
 - **Real-time Chat**: Instant responses to farming queries
-- **Specialized Knowledge**: Focused on agricultural best practices
-- **Multi-language Support**: Available in multiple languages
 
-### 🛒 E-commerce Features
+### E-commerce Features
 - **Product Catalog**: Comprehensive farming supplies marketplace
 - **Shopping Cart**: Add to cart and checkout functionality
-- **Order Management**: Track and manage your orders
-- **Secure Payments**: Safe and secure payment processing
+- **Order Management**: Users are able to Order Goods
+- **Secure Payments**: Payment on order arrival
 
 ### 👥 Community Features
 - **Agriculturist Network**: Connect with farming experts
@@ -56,21 +49,8 @@ A comprehensive agricultural web application designed to empower farmers with mo
 - **Specialization Tags**: Find experts by their specialization
 - **Location-based Search**: Find local agricultural experts
 
-## 📸 Screenshots
 
-### Dashboard
-![Dashboard](images/dashboard-preview.png)
-*Main dashboard with feature cards and image carousel*
-
-### Seasonal Information
-![Seasonal Info](images/season-wise-preview.png)
-*Seasonal crop guidance and planting calendar*
-
-### AI Assistant
-![AI Assistant](images/ai-assistant-preview.png)
-*AI-powered agricultural chatbot interface*
-
-## 🛠 Installation
+##  Installation
 
 ### Prerequisites
 - Node.js (v18 or higher)
@@ -79,7 +59,7 @@ A comprehensive agricultural web application designed to empower farmers with mo
 
 ### Step 1: Clone the Repository
 ```bash
-git clone https://github.com/yourusername/cropwise.git
+git clone https://github.com/Emma001code/cropwise.git
 cd cropwise
 ```
 
@@ -154,7 +134,7 @@ Cropwise/
 └── 📄 README.md              # This file
 ```
 
-## 🔌 API Documentation
+## API Documentation
 
 ### Authentication Endpoints
 ```http
@@ -167,7 +147,7 @@ Content-Type: application/json
   "password": "securepassword",
   "gender": "male",
   "occupation": "farmer",
-  "location": "California, USA"
+  "location": "Kigali, Rwanda"
 }
 ```
 
@@ -205,7 +185,7 @@ PUT /api/agriculturists/:id
 # Update expert profile
 ```
 
-## 🛠 Technologies Used
+## Technologies Used
 
 ### Backend
 - **Node.js**: JavaScript runtime environment
@@ -218,7 +198,7 @@ PUT /api/agriculturists/:id
 ### Frontend
 - **HTML5**: Semantic markup
 - **CSS3**: Modern styling with animations
-- **JavaScript (ES6+)**: Interactive functionality
+- **JavaScript**: Interactive functionality
 - **Responsive Design**: Mobile-first approach
 
 ### AI Integration
@@ -236,7 +216,6 @@ PUT /api/agriculturists/:id
 ### UI/UX
 - **Glassmorphism**: Modern glass-like effects
 - **Responsive Design**: Works on all devices
-- **Smooth Animations**: Engaging user interactions
 - **Intuitive Navigation**: Easy-to-use interface
 
 ### Color Scheme
@@ -245,41 +224,25 @@ PUT /api/agriculturists/:id
 - **Background**: #f8f9fa (Clean and modern)
 - **Text**: #2d3436 (High contrast readability)
 
-## 🤝 Contributing
 
-We welcome contributions from the community! Here's how you can help:
-
-### How to Contribute
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Development Guidelines
-- Follow the existing code style
-- Add comments for complex functionality
-- Test your changes thoroughly
-- Update documentation as needed
-
-## 📝 License
+##  License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👨‍💻 Author
+## Author
 
-**Chibu**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your.email@example.com
+**Emmanuel Chibuikem Ngwoke**
+- GitHub: [Emma001code](https://github.com/Emma001code)
+- Email: e.ngwoke@alustudent.com
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **OpenRouter**: For AI model access
 - **DeepSeek**: For agricultural AI assistance
 - **Express.js Community**: For the excellent framework
 - **Agricultural Experts**: For domain knowledge and feedback
 
-## 📞 Support
+## Support
 
 If you encounter any issues or have questions:
 
@@ -287,11 +250,10 @@ If you encounter any issues or have questions:
 2. **Create an Issue**: Use GitHub Issues for bug reports
 3. **Contact Support**: Email e.ngwoke@alustudent.com
 
-## 🔮 Roadmap
+## Roadmap
 
 ### Upcoming Features
 - [ ] **Mobile App**: React Native version
-- [ ] **Weather API**: Real-time weather integration
 - [ ] **Soil Testing**: Advanced soil analysis tools
 - [ ] **Marketplace**: Enhanced e-commerce features
 - [ ] **Community Forum**: Farmer discussion platform
@@ -306,9 +268,7 @@ If you encounter any issues or have questions:
 
 <div align="center">
 
-**🌾 Built with ❤️ for Farmers Worldwide 🌾**
+**Built with love and interest for Farmers Worldwide**
 
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/cropwise?style=social)](https://github.com/yourusername/cropwise)
-[![GitHub forks](https://img.shields.io/github/forks/yourusername/cropwise?style=social)](https://github.com/yourusername/cropwise)
 
 </div>
