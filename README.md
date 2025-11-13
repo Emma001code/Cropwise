@@ -90,7 +90,7 @@ You can change or disable this account once you sign in—just keep one admin us
 
 - `OPENROUTER_API_KEY` – required for the chatbot. Create one at [openrouter.ai/keys](https://openrouter.ai/keys).
 - `WEATHER_API_KEY` – use your OpenWeatherMap API key for weather data.
-- `FIREBASE_*` – copy the values from the service account JSON. On Vercel, paste them exactly as shown in the JSON (remember to escape newlines for the private key).
+- `FIREBASE_*` – copy the values from the service account JSON. On Vercel/Render, paste them exactly as shown in the JSON (remember to escape newlines for the private key).
 - `serviceAccountKey.json` – only needed locally. Never commit it.
 
 If Firebase credentials are missing, the server falls back to the JSON files (`users.json`, `products.json`, etc.). That mode works for quick demos but will not persist anything after a redeploy.
