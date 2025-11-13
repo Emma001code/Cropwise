@@ -1,279 +1,195 @@
-# Cropwise - Farmer-Friendly Agricultural Web Application
+# Cropwise – Farmer-Friendly Agricultural Platform
 
-A comprehensive agricultural web application designed to empower farmers with modern tools for crop management, seasonal guidance, soil analysis, and AI-powered agricultural assistance and real time weather information.
+Cropwise helps farmers manage daily activities with tools for weather tracking, crop planning, product sourcing, expert support, and an integrated AI assistant.
 
 ## Live Demo
 
-**view the application:** [https://cropwise-hkm1.onrender.com](https://cropwise-hkm1.onrender.com)
+[https://cropwise-hkm1.onrender.com](https://cropwise-hkm1.onrender.com)
 
-## Table of Contents
+## Contents
 
-- [Features](#-features)
-- [Installation](#-installation)
-- [Usage](#-usage)
-- [Project Structure](#-project-structure)
-- [API Documentation](#-api-documentation)
-- [Technologies Used](#-technologies-used)
-- [License](#-license)
+- [Features](#features)
+- [Quick Start](#quick-start)
+- [Configuration Reference](#configuration-reference)
+- [Usage Highlights](#usage-highlights)
+- [Project Layout](#project-layout)
+- [API Overview](#api-overview)
+- [Tech Stack](#tech-stack)
+- [Support](#support)
+- [License](#license)
 
 ## Features
 
-### User Authentication
-- **Secure Registration**: Complete user signup with validation
-- **Login System**: Email/password authentication with session management
-- **Profile Management**: User profile display and editing
-- **Session Security**: Token-based authentication with localStorage
+- User accounts with profile management and role-based access (admin, farmer, agriculturist).
+- Product catalogue with cart, checkout flow, and order tracking.
+- Agriculturist directory with enrollment, profile editing, and admin moderation.
+- Real-time weather dashboard powered by OpenWeatherMap.
+- Conversation assistant backed by OpenRouter-hosted AI models.
+- Firestore-backed persistence with JSON fallbacks for offline testing.
 
-### Agricultural Tools
-- **Seasonal Guidance**: Comprehensive crop information for all seasons
-- **Soil Analysis**: Detailed soil type information and cultivation tips
-- **Weather Updates**: Real-time weather information for farming decisions
-- **Expert Network**: Connect with agricultural specialists
-- **Purchase Supplies**: Integrated marketplace for farming equipment
-- **Weather Information**: Integrated marketplace for farming equipment
+## Quick Start
 
-### AI-Powered Assistant
-- **DeepSeek AI Integration**: Advanced agricultural chatbot
-- **Real-time Chat**: Instant responses to farming queries
+### 1. Clone and install
 
-### E-commerce Features
-- **Product Catalog**: Comprehensive farming supplies marketplace
-- **Shopping Cart**: Add to cart and checkout functionality
-- **Order Management**: Users are able to Order Goods
-- **Secure Payments**: Payment on order arrival
-
-### Community Features
-- **Agriculturist Network**: Connect with farming experts
-- **Profile Management**: Create and manage expert profiles
-- **Specialization Tags**: Find experts by their specialization
-- **Location-based Search**: Find local agricultural experts
-
-
-##  Installation
-
-### Prerequisites
-- Node.js (v18 or higher)
-- npm or yarn package manager
-- Git
-
-### Step 1: Clone the Repository
 ```bash
 git clone https://github.com/Emma001code/cropwise.git
 cd cropwise
-```
-
-### Step 2: Install Dependencies
-```bash
 npm install
 ```
 
-### Step 3: Environment Setup
-**IMPORTANT:** Create a `.env` file in the root directory (DO NOT commit this file to git):
+### 2. Configure environment variables
 
-```env
+Copy the template and fill in your own secrets:
+
+```bash
+cp env.example .env
+```
+
+Update `.env` with the following values:
+
+```
 PORT=3000
 NODE_ENV=development
-OPENROUTER_API_KEY=your_openrouter_api_key_here
+OPENROUTER_API_KEY=sk-your-openrouter-key
+WEATHER_API_KEY=your-open-weather-map-key
+FIREBASE_PROJECT_ID=your-firebase-project-id
+FIREBASE_CLIENT_EMAIL=service-account-client-email
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 ```
 
-**Get your API key:**
-1. Go to [https://openrouter.ai/keys](https://openrouter.ai/keys)
-2. Sign up or log in
-3. Create a new API key
-4. Copy it and paste it in your `.env` file
+> Keep the private key wrapped in quotes and replace literal newlines with `\n` if you copy/paste.
 
-⚠️ **Security Note:** The `.env` file is already in `.gitignore` and will NOT be committed to GitHub. Never share or commit your API key!
+### 3. Provide Firebase credentials
 
-### Step 4: Start the Application
+For local development, place `serviceAccountKey.json` in the project root (download it from the Firebase console where you created the Firestore database). This file is already ignored by git.
+
+Vercel or other hosted deployments must rely on the environment variables listed above—do **not** upload the JSON file to production.
+
+Refer to `FIREBASE_SETUP_GUIDE.md` if you need a walkthrough on creating the project and enabling Firestore.
+
+### 4. Run the server
+
 ```bash
-# Development mode
-npm run dev
-
-# Production mode
-npm start
+npm run dev   # auto reload in development
+# or
+npm start     # production-style launch
 ```
 
-### Step 5: Access the Application
-Open your browser and navigate to [http://localhost:3000](http://localhost:3000)
+The app serves both API routes and static pages on [http://localhost:3000](http://localhost:3000).
 
-## Usage
+### 5. Log in with sample data
 
-### Getting Started
-1. **Welcome Page**: Start at the landing page
-2. **Sign Up**: Create your farmer account
-3. **Login**: Access your personalized dashboard
-4. **Explore Features**: Navigate through different agricultural tools
+The first boot loads data from Firestore. If the database is empty, it migrates the bundled JSON fixtures automatically. After that, everything persists in Firestore.
 
-### Key Workflows
-- **Crop Planning**: Use seasonal guidance for planting decisions
-- **Soil Management**: Analyze soil types for optimal cultivation
-- **Expert Consultation**: Connect with agricultural specialists
-- **Supply Shopping**: Purchase farming equipment and supplies
-- **AI Assistance**: Get instant answers to farming questions
+- Admin email: `Chibuikeemmanuel879@gmail.com`
+- Admin password: `*****`
 
-## Project Structure
+You can change or disable this account once you sign in—just keep one admin user available for deployment day.
+
+## Configuration Reference
+
+- `OPENROUTER_API_KEY` – required for the chatbot. Create one at [openrouter.ai/keys](https://openrouter.ai/keys).
+- `WEATHER_API_KEY` – use your OpenWeatherMap API key for weather data.
+- `FIREBASE_*` – copy the values from the service account JSON. On Vercel, paste them exactly as shown in the JSON (remember to escape newlines for the private key).
+- `serviceAccountKey.json` – only needed locally. Never commit it.
+
+If Firebase credentials are missing, the server falls back to the JSON files (`users.json`, `products.json`, etc.). That mode works for quick demos but will not persist anything after a redeploy.
+
+## Usage Highlights
+
+- **Accounts**: register, log in, update profile, reset password, and stay signed in via JWT tokens stored in `localStorage`.
+- **Admin dashboard**: manage users, approve agriculturists, upload products, and review orders—all relying on the admin role check.
+- **Marketplace**: browse initial inventory, add to cart, place orders, and review status in `orders.html`.
+- **Agriculturists**: farmers can enroll themselves, edit their profile, and appear in the public directory. Admins can moderate or remove entries.
+- **Weather**: switch between °C/°F, search by city, and review a 7-day forecast.
+- **AI Assistant**: chat through `/ai-assistant` with responses proxied through the backend so your key stays private.
+
+## Project Layout
 
 ```
 Cropwise/
-├── 📁 public/                 # Static assets
-│   ├── 📁 images/            # Image resources
-│   └── 📁 styles/            # CSS files
-├── 📁 src/                   # Source code
-│   ├── 📁 components/        # React components (future)
-│   └── 📁 utils/             # Utility functions
-├── 📄 server.js              # Main server file
-├── 📄 package.json           # Dependencies and scripts
-├── 📄 .env                   # Environment variables
-├── 📄 users.json             # User database
-├── 📄 products.json          # Product catalog
-├── 📄 orders.json            # Order management
-├── 📄 agriculturists.json    # Expert profiles
-├── 📄 welcome.html           # Landing page
-├── 📄 signup.html            # User registration
-├── 📄 login.html             # User authentication
-├── 📄 dashboard.html         # Main dashboard
-├── 📄 profile.html           # User profile
-├── 📄 season-wise.html       # Seasonal information
-├── 📄 soil-type.html         # Soil analysis
-├── 📄 ai-assistant.html      # AI chatbot
-├── 📄 purchase.html          # E-commerce
-├── 📄 agriculturists.html    # Expert network
-├── 📄 faqs.html              # Help and support
-└── 📄 README.md              # This file
+├── server.js                # Express server and API routes
+├── styles.css               # Shared styling for HTML pages
+├── *.html                   # Standalone pages served by Express
+├── src/                     # React-in-progress version (not used in build)
+├── users.json               # Data fixtures (fallback only)
+├── products.json            # Data fixtures (fallback only)
+├── orders.json              # Data fixtures (fallback only)
+├── agriculturists.json      # Data fixtures (fallback only)
+├── FIREBASE_SETUP_GUIDE.md  # Detailed Firestore setup guide
+├── DEPLOYMENT_CHECKLIST.md  # Pre-deploy checklist
+├── env.example              # Environment template
+└── README.md
 ```
 
-## API Documentation
+Static assets live inside `images/`. Chatbot experiments and alternative entry points are under `chatbot_server.py` and `templates/`.
 
-### Authentication Endpoints
-```http
-POST /api/signup
-Content-Type: application/json
+## API Overview
 
-{
-  "username": "farmer123",
-  "email": "farmer@example.com",
-  "password": "securepassword",
-  "gender": "male",
-  "occupation": "farmer",
-  "location": "Kigali, Rwanda"
-}
+### Auth
+
+```
+POST /api/signup          # create account
+POST /api/login           # authenticate
+POST /api/logout          # clear session
+GET  /api/check-admin/:email
 ```
 
-```http
-POST /api/login
-Content-Type: application/json
+### Products & Orders
 
-{
-  "username": "farmer@example.com",
-  "password": "securepassword"
-}
+```
+GET    /api/products
+POST   /api/products          # admin only
+PUT    /api/products/:id
+DELETE /api/products/:id
+
+POST   /api/orders
+GET    /api/orders            # admin only
+DELETE /api/orders/:id        # admin only
 ```
 
-### Product Endpoints
-```http
-GET /api/products
-# Returns all available products
+### Agriculturists
 
-GET /api/products/:id
-# Returns specific product details
-
-POST /api/orders
-# Create new order
+```
+GET    /api/agriculturists
+POST   /api/agriculturists
+PUT    /api/agriculturists/:id
+DELETE /api/agriculturists/:id   # admin only
 ```
 
-### Agriculturist Endpoints
-```http
-GET /api/agriculturists
-# Returns all agricultural experts
+### AI Assistant & Weather
 
-POST /api/agriculturists
-# Register as agricultural expert
-
-PUT /api/agriculturists/:id
-# Update expert profile
+```
+POST /api/ai-chat        # proxies requests to OpenRouter
+GET  /api/weather        # proxy option for secure weather calls (optional)
 ```
 
-## Technologies Used
+Responses are JSON. Frontend pages consume these endpoints via `fetch`.
 
-### Backend
-- **Node.js**: JavaScript runtime environment
-- **Express.js**: Web application framework
-- **JSON Web Tokens**: Secure authentication
-- **bcryptjs**: Password hashing
-- **Multer**: File upload handling
-- **CORS**: Cross-origin resource sharing
+## Tech Stack
 
-### Frontend
-- **HTML5**: Semantic markup
-- **CSS3**: Modern styling with animations
-- **JavaScript**: Interactive functionality
-- **Responsive Design**: Mobile-first approach
-
-### AI Integration
-- **OpenRouter API**: AI model access
-- **DeepSeek AI**: Agricultural chatbot
-- **Axios**: HTTP client for API calls
-
-### Development Tools
-- **Nodemon**: Development server
-- **Git**: Version control
-- **VS Code**: Recommended IDE
-
-## Design Features
-
-### UI/UX
-- **Glassmorphism**: Modern glass-like effects
-- **Responsive Design**: Works on all devices
-- **Intuitive Navigation**: Easy-to-use interface
-
-### Color Scheme
-- **Primary Green**: (Agricultural theme)
-- **Success Green**: (Notifications)
-- **Background**: (Clean and modern)
-- **Text**: (High contrast readability)
-
-## Author
-
-**Emmanuel Chibuikem Ngwoke**
-- GitHub: [Emma001code](https://github.com/Emma001code)
-- Email: e.ngwoke@alustudent.com
-
-## Acknowledgments
-
-- **OpenRouter**: For AI model access
-- **DeepSeek**: For agricultural AI assistance
-- **Express.js Community**: For the excellent framework
-- **Agricultural Experts**: For domain knowledge and feedback
+- **Backend**: Node.js, Express, Firebase Admin SDK, Firestore, Multer, Bcrypt, JSON Web Tokens.
+- **Frontend**: HTML5, CSS3, vanilla JavaScript. SVG icons replace all emoji toggles for a consistent UI.
+- **Integrations**: OpenRouter (chatbot), OpenWeatherMap (forecast), Formspree (contact forms).
+- **Tooling**: Nodemon, dotenv, ESLint (through IDE), Render/Vercel for hosting.
 
 ## Support
 
-If you encounter any issues or have questions:
+- Check `SETUP_API_KEY.md`, `FIREBASE_SETUP_GUIDE.md`, and `DEPLOYMENT_CHECKLIST.md` for deeper setup notes.
+- File an issue on GitHub or write to `e.ngwoke@alustudent.com` if something blocks you.
 
-1. **Create an Issue**: Use GitHub Issues for bug reports
-2. **Contact Support**: Email e.ngwoke@alustudent.com
+## Acknowledgements
 
-## Roadmap
+- Farmers who shared feedback during early field trials.
+- OpenRouter and DeepSeek teams for maintaining reliable AI endpoints.
+- Firebase Support resources for their Firestore examples and tooling tips.
+- OpenWeatherMap for the comprehensive weather datasets.
+- ALU peers and mentors who reviewed requirements and provided design critiques.
 
-### Upcoming Features
-- [ ] **Mobile App**: React Native version
-- [ ] **Soil Testing**: Advanced soil analysis tools
-- [ ] **Marketplace**: Enhanced e-commerce features
-- [ ] **Community Forum**: Farmer discussion platform
-- [ ] **Multi-language**: International support
+## License
 
-### Version History
-- **v1.0.0** (Current): Initial release with core features
-- **v1.1.0** (Planned): Enhanced AI features
-- **v2.0.0** (Planned): Mobile app release
+MIT License – see [LICENSE](LICENSE).
 
 ---
-##  License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-<div align="center">
-
-**Built with love and interest for Farmers Worldwide**
-
-
-</div>
+Built for farmers everywhere who want reliable digital tools without the steep learning curve. 
