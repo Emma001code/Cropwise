@@ -111,18 +111,18 @@ I'm currently experiencing high demand and all AI models are temporarily unavail
 
 Here are some general tips for crops that are drying up:
 
-🌱 **Immediate Actions:**
+ **Immediate Actions:**
 - Check soil moisture levels
 - Increase watering frequency
 - Apply mulch to retain moisture
 - Check for root damage or pests
 
-💧 **Watering Tips:**
+ **Watering Tips:**
 - Water deeply but less frequently
 - Water early morning or evening
 - Avoid watering leaves to prevent disease
 
-🔍 **Diagnosis:**
+ **Diagnosis:**
 - Check for signs of pests or disease
 - Test soil pH and nutrient levels
 - Monitor weather conditions

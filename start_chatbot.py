@@ -10,39 +10,39 @@ import os
 
 def install_requirements():
     """Install required Python packages"""
-    print("🔧 Installing required packages...")
+    print(" Installing required packages...")
     try:
         subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
-        print("✅ Packages installed successfully!")
+        print(" Packages installed successfully!")
         return True
     except subprocess.CalledProcessError as e:
-        print(f"❌ Error installing packages: {e}")
+        print(f" Error installing packages: {e}")
         return False
 
 def start_server():
     """Start the Flask chatbot server"""
-    print("🚀 Starting Cropwise AI Chatbot...")
-    print("📱 Open your browser and go to: http://localhost:5000")
-    print("🌾 The AI assistant is ready to help with agricultural questions!")
-    print("⏹️  Press Ctrl+C to stop the server")
+    print(" Starting Cropwise AI Chatbot...")
+    print(" Open your browser and go to: http://localhost:5000")
+    print(" The AI assistant is ready to help with agricultural questions!")
+    print("⏹  Press Ctrl+C to stop the server")
     print("-" * 50)
     
     try:
         from chatbot_server import app
         app.run(debug=True, host='0.0.0.0', port=5000)
     except KeyboardInterrupt:
-        print("\n👋 Chatbot server stopped. Goodbye!")
+        print("\n Chatbot server stopped. Goodbye!")
     except Exception as e:
-        print(f"❌ Error starting server: {e}")
+        print(f" Error starting server: {e}")
 
 def main():
     """Main function"""
-    print("🌾 Welcome to Cropwise AI Chatbot Setup!")
+    print(" Welcome to Cropwise AI Chatbot Setup!")
     print("=" * 50)
     
     # Check if requirements.txt exists
     if not os.path.exists("requirements.txt"):
-        print("❌ requirements.txt not found!")
+        print(" requirements.txt not found!")
         return
     
     # Install requirements

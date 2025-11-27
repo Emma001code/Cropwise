@@ -1082,7 +1082,7 @@ app.post('/api/ai-chat', async (req, res) => {
             console.error('All AI models failed. Last error:', lastError?.response?.data || lastError?.message);
             aiMessage = `I'm sorry, I couldn't connect to the AI service right now. This might be due to:
 
-🔑 **Possible Issues:**
+ **Possible Issues:**
 - Service temporarily unavailable
 - Network connection issue
 
@@ -1094,13 +1094,13 @@ app.post('/api/ai-chat', async (req, res) => {
 
 In the meantime, here are general farming tips:
 
-🌱 **Immediate Actions:**
+ **Immediate Actions:**
 - Check soil moisture levels regularly
 - Water according to your crop's needs
 - Monitor for pests and diseases
 - Apply appropriate fertilizers
 
-💧 **Watering Best Practices:**
+ **Watering Best Practices:**
 - Water deeply but less frequently
 - Water early morning or evening to reduce evaporation
 - Avoid watering leaves to prevent disease
